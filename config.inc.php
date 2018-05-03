@@ -14,11 +14,7 @@
  * This is needed for cookie based authentication to encrypt password in
  * cookie
  */
-<<<<<<< HEAD
 $cfg['blowfish_secret'] = ''; /* You can put any random numbers/letters */
-=======
-$cfg['blowfish_secret'] = '123651b1561d891651'; /* You can put any random numbers/letters */
->>>>>>> 355e29a9735d1e433e2a0eef0e777fcd9406a4a0
 
 /*
  * Servers configuration
