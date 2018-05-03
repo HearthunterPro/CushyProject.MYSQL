@@ -11,6 +11,8 @@ if (! defined('PHPMYADMIN')) {
 
 use PhpMyAdmin\Replication;
 
+$replication = new Replication();
+
 /**
  * get master replication from server
  */
@@ -100,7 +102,7 @@ $slave_variables  = array(
  * define important variables, which need to be watched for
  * correct running of replication in slave mode
  *
- * @usedby PhpMyAdmin\ReplicationGui::getHtmlForReplicationStatusTable()
+ * @usedby PhpMyAdmin\ReplicationGui->getHtmlForReplicationStatusTable()
  */
 // TODO change to regexp or something, to allow for negative match.
 // To e.g. highlight 'Last_Error'
@@ -128,42 +130,42 @@ foreach ($replication_types as $type) {
     }
     if ($GLOBALS['replication_info'][$type]['status']) {
         if ($type == "master") {
-            Replication::fillInfo(
+            $replication->fillInfo(
                 $type, 'Do_DB', $server_master_replication[0],
                 'Binlog_Do_DB'
             );
 
-            Replication::fillInfo(
+            $replication->fillInfo(
                 $type, 'Ignore_DB', $server_master_replication[0],
                 'Binlog_Ignore_DB'
             );
         } elseif ($type == "slave") {
-            Replication::fillInfo(
+            $replication->fillInfo(
                 $type, 'Do_DB', $server_slave_replication[0],
                 'Replicate_Do_DB'
             );
 
-            Replication::fillInfo(
+            $replication->fillInfo(
                 $type, 'Ignore_DB', $server_slave_replication[0],
                 'Replicate_Ignore_DB'
             );
 
-            Replication::fillInfo(
+            $replication->fillInfo(
                 $type, 'Do_Table', $server_slave_replication[0],
                 'Replicate_Do_Table'
             );
 
-            Replication::fillInfo(
+            $replication->fillInfo(
                 $type, 'Ignore_Table', $server_slave_replication[0],
                 'Replicate_Ignore_Table'
             );
 
-            Replication::fillInfo(
+            $replication->fillInfo(
                 $type, 'Wild_Do_Table', $server_slave_replication[0],
                 'Replicate_Wild_Do_Table'
             );
 
-            Replication::fillInfo(
+            $replication->fillInfo(
                 $type, 'Wild_Ignore_Table', $server_slave_replication[0],
                 'Replicate_Wild_Ignore_Table'
             );

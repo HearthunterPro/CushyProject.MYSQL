@@ -16,7 +16,7 @@ if (! defined('PHPMYADMIN') && ! defined('TESTSUITE')) {
 
 /* general tags */
 html {
-    font-size: <?php echo $theme->getFontSize(); ?>
+    font-size: 82%;
 }
 
 input,
@@ -3331,10 +3331,6 @@ body .ui-dialog .ui-button-text-only .ui-button-text {
 
 .scrollindicator {
     display: none;
-}
-
-.responsivetable {
-    overflow-x: auto;
 }
 
 @media only screen and (max-width: 768px) {

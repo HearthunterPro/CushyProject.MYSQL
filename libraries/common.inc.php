@@ -38,7 +38,6 @@ use PhpMyAdmin\ErrorHandler;
 use PhpMyAdmin\LanguageManager;
 use PhpMyAdmin\Logging;
 use PhpMyAdmin\Message;
-use PhpMyAdmin\Plugins\AuthenticationPlugin;
 use PhpMyAdmin\Response;
 use PhpMyAdmin\Session;
 use PhpMyAdmin\ThemeManager;
@@ -56,9 +55,9 @@ if (getcwd() == dirname(__FILE__)) {
  * Minimum PHP version; can't call Core::fatalError() which uses a
  * PHP 5 function, so cannot easily localize this message.
  */
-if (version_compare(PHP_VERSION, '5.5.0', 'lt')) {
+if (version_compare(PHP_VERSION, '7.1.0', 'lt')) {
     die(
-        'PHP 5.5+ is required. <br /> Currently installed version is: '
+        'PHP 7.1+ is required. <br /> Currently installed version is: '
         . phpversion()
     );
 }
@@ -72,11 +71,6 @@ define('PHPMYADMIN', true);
  * Load vendor configuration.
  */
 require_once './libraries/vendor_config.php';
-
-/**
- * Load hash polyfill.
- */
-require_once './libraries/hash.lib.php';
 
 /**
  * Activate autoloader
@@ -146,7 +140,7 @@ $GLOBALS['url_params'] = array();
  */
 $GLOBALS['goto'] = '';
 // Security fix: disallow accessing serious server files via "?goto="
-if (Core::checkPageValidity($_REQUEST['goto'])) {
+if (isset($_REQUEST['goto']) && Core::checkPageValidity($_REQUEST['goto'])) {
     $GLOBALS['goto'] = $_REQUEST['goto'];
     $GLOBALS['url_params']['goto'] = $_REQUEST['goto'];
 } else {
@@ -157,7 +151,7 @@ if (Core::checkPageValidity($_REQUEST['goto'])) {
  * returning page
  * @global string $GLOBALS['back']
  */
-if (Core::checkPageValidity($_REQUEST['back'])) {
+if (isset($_REQUEST['back']) && Core::checkPageValidity($_REQUEST['back'])) {
     $GLOBALS['back'] = $_REQUEST['back'];
 } else {
     unset($_REQUEST['back'], $_GET['back'], $_POST['back'], $_COOKIE['back']);
@@ -225,7 +219,7 @@ Core::setGlobalDbOrTable('table');
  * Store currently selected recent table.
  * Affect $GLOBALS['db'] and $GLOBALS['table']
  */
-if (Core::isValid($_REQUEST['selected_recent_table'])) {
+if (isset($_REQUEST['selected_recent_table']) && Core::isValid($_REQUEST['selected_recent_table'])) {
     $recent_table = json_decode($_REQUEST['selected_recent_table'], true);
 
     $GLOBALS['db']

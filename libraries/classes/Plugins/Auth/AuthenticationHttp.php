@@ -15,8 +15,6 @@ use PhpMyAdmin\Response;
 use PhpMyAdmin\Config;
 use PhpMyAdmin\Core;
 
-require_once './libraries/hash.lib.php';
-
 /**
  * Handles the HTTP authentication methods
  *
@@ -24,6 +22,14 @@ require_once './libraries/hash.lib.php';
  */
 class AuthenticationHttp extends AuthenticationPlugin
 {
+    /**
+     * AuthenticationHttp constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     /**
      * Displays authentication form and redirect as necessary
      *
