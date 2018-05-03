@@ -30,7 +30,6 @@ class ImportXml extends ImportPlugin
      */
     public function __construct()
     {
-        parent::__construct();
         $this->setProperties();
     }
 
@@ -72,7 +71,7 @@ class ImportXml extends ImportPlugin
          * it can process compressed files
          */
         while (!($finished && $i >= $len) && !$error && !$timeout_passed) {
-            $data = $this->import->getNextChunk();
+            $data = Import::getNextChunk();
             if ($data === false) {
                 /* subtract data we didn't handle yet and stop processing */
                 $GLOBALS['offset'] -= strlen($buffer);
@@ -303,7 +302,7 @@ class ImportXml extends ImportPlugin
 
                 $len = count($tables);
                 for ($i = 0; $i < $len; ++$i) {
-                    $analyses[] = $this->import->analyzeTable($tables[$i]);
+                    $analyses[] = Import::analyzeTable($tables[$i]);
                 }
             }
         }
@@ -360,13 +359,13 @@ class ImportXml extends ImportPlugin
         }
 
         /* Created and execute necessary SQL statements from data */
-        $this->import->buildSql($db_name, $tables, $analyses, $create, $options, $sql_data);
+        Import::buildSql($db_name, $tables, $analyses, $create, $options, $sql_data);
 
         unset($analyses);
         unset($tables);
         unset($create);
 
         /* Commit any possible data in buffers */
-        $this->import->runQuery('', '', $sql_data);
+        Import::runQuery('', '', $sql_data);
     }
 }

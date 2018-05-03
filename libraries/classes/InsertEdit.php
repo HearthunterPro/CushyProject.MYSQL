@@ -39,11 +39,6 @@ class InsertEdit
     private $relation;
 
     /**
-     * @var Transformations
-     */
-    private $transformations;
-
-    /**
      * Constructor
      *
      * @param DatabaseInterface $dbi DatabaseInterface instance
@@ -52,7 +47,6 @@ class InsertEdit
     {
         $this->dbi = $dbi;
         $this->relation = new Relation();
-        $this->transformations = new Transformations();
     }
 
     /**
@@ -2491,13 +2485,13 @@ class InsertEdit
                 'where_clause'  => $_REQUEST['where_clause'],
                 'transform_key' => $column_name
             );
-            $transform_options = $this->transformations->getOptions(
+            $transform_options = Transformations::getOptions(
                 isset($transformation[$type . '_options'])
                 ? $transformation[$type . '_options']
                 : ''
             );
             $transform_options['wrapper_link'] = Url::getCommon($_url_params);
-            $class_name = $this->transformations->getClassName($include_file);
+            $class_name = Transformations::getClassName($include_file);
             /** @var TransformationsPlugin $transformation_plugin */
             $transformation_plugin = new $class_name();
 
@@ -3274,9 +3268,9 @@ class InsertEdit
             $include_file = 'libraries/classes/Plugins/Transformations/' . $file;
             if (is_file($include_file)) {
                 include_once $include_file;
-                $class_name = $this->transformations->getClassName($include_file);
+                $class_name = Transformations::getClassName($include_file);
                 $transformation_plugin = new $class_name();
-                $transformation_options = $this->transformations->getOptions(
+                $transformation_options = Transformations::getOptions(
                     $column_mime['input_transformation_options']
                 );
                 $_url_params = array(
@@ -3408,8 +3402,8 @@ class InsertEdit
             . '<tbody>';
 
         //store the default value for CharEditing
-        $default_char_editing = $GLOBALS['cfg']['CharEditing'];
-        $mime_map = $this->transformations->getMime($db, $table);
+        $default_char_editing  = $GLOBALS['cfg']['CharEditing'];
+        $mime_map = Transformations::getMIME($db, $table);
         $where_clause = '';
         if (isset($where_clause_array[$row_id])) {
             $where_clause = $where_clause_array[$row_id];

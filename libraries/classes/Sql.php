@@ -40,17 +40,11 @@ class Sql
     private $relation;
 
     /**
-     * @var Transformations
-     */
-    private $transformations;
-
-    /**
      * Constructor
      */
     public function __construct()
     {
         $this->relation = new Relation();
-        $this->transformations = new Transformations();
     }
 
     /**
@@ -1355,7 +1349,7 @@ EOT;
                 && $statement->altered[0]->options->has('DROP')
             ) {
                 if (!empty($statement->altered[0]->field->column)) {
-                    $this->transformations->clear(
+                    Transformations::clear(
                         $db,
                         $table,
                         $statement->altered[0]->field->column
@@ -1363,7 +1357,7 @@ EOT;
                 }
             }
         } elseif ($statement instanceof DropStatement) {
-            $this->transformations->clear($db, $table);
+            Transformations::clear($db, $table);
         }
     }
 

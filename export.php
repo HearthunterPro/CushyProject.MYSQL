@@ -35,8 +35,6 @@ $header   = $response->getHeader();
 $scripts  = $header->getScripts();
 $scripts->addFile('export_output.js');
 
-$export = new Export();
-
 //check if it's the GET request to check export time out
 if (isset($_GET['check_time_out'])) {
     if (isset($_SESSION['pma_export_error'])) {
@@ -300,7 +298,7 @@ if ((!empty($parser->statements[0]))
     $aliases = \PhpMyAdmin\SqlParser\Utils\Misc::getAliases($parser->statements[0], $db);
 }
 if (!empty($_REQUEST['aliases'])) {
-    $aliases = $export->mergeAliases($aliases, $_REQUEST['aliases']);
+    $aliases = Export::mergeAliases($aliases, $_REQUEST['aliases']);
     $_SESSION['tmpval']['aliases'] = $_REQUEST['aliases'];
 }
 
@@ -311,7 +309,7 @@ Util::setTimeLimit();
 if (! empty($cfg['MemoryLimit'])) {
     ini_set('memory_limit', $cfg['MemoryLimit']);
 }
-register_shutdown_function([$export, 'shutdown']);
+register_shutdown_function('PhpMyAdmin\Export::shutdown');
 // Start with empty buffer
 $dump_buffer = '';
 $dump_buffer_len = 0;
@@ -341,7 +339,7 @@ $output_charset_conversion = $asfile
 $GLOBALS['onfly_compression'] = $GLOBALS['cfg']['CompressOnFly']
     && $compression == 'gzip';
 if ($GLOBALS['onfly_compression']) {
-    $GLOBALS['memory_limit'] = $export->getMemoryLimit();
+    $GLOBALS['memory_limit'] = Export::getMemoryLimit();
 }
 
 // Generate filename and mime type if needed
@@ -349,7 +347,7 @@ if ($asfile) {
     if (empty($remember_template)) {
         $remember_template = '';
     }
-    list($filename, $mime_type) = $export->getFilenameAndMimetype(
+    list($filename, $mime_type) = Export::getFilenameAndMimetype(
         $export_type, $remember_template, $export_plugin, $compression,
         $filename_template
     );
@@ -359,13 +357,13 @@ if ($asfile) {
 
 // Open file on server if needed
 if ($save_on_server) {
-    list($save_filename, $message, $file_handle) = $export->openFile(
+    list($save_filename, $message, $file_handle) = Export::openFile(
         $filename, $quick_export
     );
 
     // problem opening export file on server?
     if (! empty($message)) {
-        $export->showPage($db, $table, $export_type);
+        Export::showPage($db, $table, $export_type);
     }
 } else {
     /**
@@ -393,7 +391,7 @@ if ($save_on_server) {
                 exit();
             }
         }
-        list($html, $back_button, $refreshButton) = $export->getHtmlForDisplayedExportHeader(
+        list($html, $back_button, $refreshButton) = Export::getHtmlForDisplayedExportHeader(
             $export_type, $db, $table
         );
         echo $html;
@@ -436,7 +434,7 @@ do {
         if (! isset($db_select)) {
             $db_select = '';
         }
-        $export->exportServer(
+        Export::exportServer(
             $db_select, $whatStrucOrData, $export_plugin, $crlf, $err_url,
             $export_type, $do_relation, $do_comments, $do_mime, $do_dates,
             $aliases, $separate_files
@@ -453,19 +451,19 @@ do {
             $table_data = $tables;
         }
         if (isset($lock_tables)) {
-            $export->lockTables($db, $tables, "READ");
+            Export::lockTables($db, $tables, "READ");
             try {
-                $export->exportDatabase(
+                Export::exportDatabase(
                     $db, $tables, $whatStrucOrData, $table_structure,
                     $table_data, $export_plugin, $crlf, $err_url, $export_type,
                     $do_relation, $do_comments, $do_mime, $do_dates, $aliases,
                     $separate_files
                 );
             } finally {
-                $export->unlockTables();
+                Export::unlockTables();
             }
         } else {
-            $export->exportDatabase(
+            Export::exportDatabase(
                 $db, $tables, $whatStrucOrData, $table_structure, $table_data,
                 $export_plugin, $crlf, $err_url, $export_type, $do_relation,
                 $do_comments, $do_mime, $do_dates, $aliases, $separate_files
@@ -485,18 +483,18 @@ do {
         }
         if (isset($lock_tables)) {
             try {
-                $export->lockTables($db, array($table), "READ");
-                $export->exportTable(
+                Export::lockTables($db, array($table), "READ");
+                Export::exportTable(
                     $db, $table, $whatStrucOrData, $export_plugin, $crlf,
                     $err_url, $export_type, $do_relation, $do_comments,
                     $do_mime, $do_dates, $allrows, $limit_to, $limit_from,
                     $sql_query, $aliases
                 );
             } finally {
-                $export->unlockTables();
+                Export::unlockTables();
             }
         } else {
-            $export->exportTable(
+            Export::exportTable(
                 $db, $table, $whatStrucOrData, $export_plugin, $crlf, $err_url,
                 $export_type, $do_relation, $do_comments, $do_mime, $do_dates,
                 $allrows, $limit_to, $limit_from, $sql_query, $aliases
@@ -511,14 +509,14 @@ do {
 // End of fake loop
 
 if ($save_on_server && ! empty($message)) {
-    $export->showPage($db, $table, $export_type);
+    Export::showPage($db, $table, $export_type);
 }
 
 /**
  * Send the dump as a file...
  */
 if (empty($asfile)) {
-    echo $export->getHtmlForDisplayedExportFooter($back_button, $refreshButton);
+    echo Export::getHtmlForDisplayedExportFooter($back_button, $refreshButton);
     return;
 } // end if
 
@@ -534,21 +532,21 @@ if ($output_charset_conversion) {
 // Compression needed?
 if ($compression) {
     if (! empty($separate_files)) {
-        $dump_buffer = $export->compress(
+        $dump_buffer = Export::compress(
             $dump_buffer_objects, $compression, $filename
         );
     } else {
-        $dump_buffer = $export->compress($dump_buffer, $compression, $filename);
+        $dump_buffer = Export::compress($dump_buffer, $compression, $filename);
     }
 
 }
 
 /* If we saved on server, we have to close file now */
 if ($save_on_server) {
-    $message = $export->closeFile(
+    $message = Export::closeFile(
         $file_handle, $dump_buffer, $save_filename
     );
-    $export->showPage($db, $table, $export_type);
+    Export::showPage($db, $table, $export_type);
 } else {
     echo $dump_buffer;
 }

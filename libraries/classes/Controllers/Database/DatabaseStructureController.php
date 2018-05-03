@@ -61,18 +61,12 @@ class DatabaseStructureController extends DatabaseController
     private $relation;
 
     /**
-     * @var Replication
-     */
-    private $replication;
-
-    /**
      * Constructor
      */
     public function __construct($response, $dbi, $db)
     {
         parent::__construct($response, $dbi, $db);
         $this->relation = new Relation();
-        $this->replication = new Replication();
     }
 
     /**
@@ -952,10 +946,10 @@ class DatabaseStructureController extends DatabaseController
     protected function hasTable(array $db, $truename)
     {
         foreach ($db as $db_table) {
-            if ($this->db == $this->replication->extractDbOrTable($db_table)
+            if ($this->db == Replication::extractDbOrTable($db_table)
                 && preg_match(
                     "@^" .
-                    preg_quote(mb_substr($this->replication->extractDbOrTable($db_table, 'table'), 0, -1)) . "@",
+                    preg_quote(mb_substr(Replication::extractDbOrTable($db_table, 'table'), 0, -1)) . "@",
                     $truename
                 )
             ) {

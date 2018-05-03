@@ -18,7 +18,6 @@ use PhpMyAdmin\Properties\Options\Groups\OptionsPropertyRootGroup;
 use PhpMyAdmin\Properties\Options\Items\BoolPropertyItem;
 use PhpMyAdmin\Properties\Options\Items\HiddenPropertyItem;
 use PhpMyAdmin\Properties\Options\Items\TextPropertyItem;
-use PhpMyAdmin\Properties\Options\Items\SelectPropertyItem;
 
 /**
  * Handles the export for the CSV format
@@ -33,7 +32,6 @@ class ExportCsv extends ExportPlugin
      */
     public function __construct()
     {
-        parent::__construct();
         $this->setProperties();
     }
 
@@ -115,10 +113,7 @@ class ExportCsv extends ExportPlugin
     public function exportHeader()
     {
         global $what, $csv_terminated, $csv_separator, $csv_enclosed, $csv_escaped;
-        //Enable columns names by default for CSV
-        if ($what == 'csv') {
-            $GLOBALS['csv_columns'] = 'yes';
-        }
+
         // Here we just prepare some values for export
         if ($what == 'excel') {
             $csv_terminated = "\015\012";
@@ -261,7 +256,7 @@ class ExportCsv extends ExportPlugin
                 $schema_insert .= $csv_separator;
             } // end for
             $schema_insert = trim(mb_substr($schema_insert, 0, -1));
-            if (!$this->export->outputHandler($schema_insert . $csv_terminated)) {
+            if (!Export::outputHandler($schema_insert . $csv_terminated)) {
                 return false;
             }
         } // end if
@@ -326,7 +321,7 @@ class ExportCsv extends ExportPlugin
                 }
             } // end for
 
-            if (!$this->export->outputHandler($schema_insert . $csv_terminated)) {
+            if (!Export::outputHandler($schema_insert . $csv_terminated)) {
                 return false;
             }
         } // end while

@@ -46,7 +46,7 @@ class Transformations
      *
      * @return array options
      */
-    public function getOptions($option_string)
+    public static function getOptions($option_string)
     {
         $result = array();
 
@@ -91,7 +91,7 @@ class Transformations
      * @staticvar   array   mimetypes
      * @return array    array[mimetype], array[transformation]
      */
-    public function getAvailableMimeTypes()
+    public static function getAvailableMIMEtypes()
     {
         static $stack = null;
 
@@ -167,7 +167,7 @@ class Transformations
      *
      * @return string the class name of transformation
      */
-    public function getClassName($filename)
+    public static function getClassName($filename)
     {
         // get the transformation class name
         $class_name = explode(".php", $filename);
@@ -183,11 +183,11 @@ class Transformations
      *
      * @return String the description of the transformation
      */
-    public function getDescription($file)
+    public static function getDescription($file)
     {
         $include_file = 'libraries/classes/Plugins/Transformations/' . $file;
         /* @var $class_name PhpMyAdmin\Plugins\TransformationsInterface */
-        $class_name = $this->getClassName($include_file);
+        $class_name = self::getClassName($include_file);
         // include and instantiate the class
         include_once $include_file;
         return $class_name::getInfo();
@@ -200,11 +200,11 @@ class Transformations
      *
      * @return String the name of the transformation
      */
-    public function getName($file)
+    public static function getName($file)
     {
         $include_file = 'libraries/classes/Plugins/Transformations/' . $file;
         /* @var $class_name PhpMyAdmin\Plugins\TransformationsInterface */
-        $class_name = $this->getClassName($include_file);
+        $class_name = self::getClassName($include_file);
         // include and instantiate the class
         include_once $include_file;
         return $class_name::getName();
@@ -222,7 +222,7 @@ class Transformations
      *
      * @return string
      */
-    public function fixUpMime($value)
+    static function fixupMIME($value)
     {
         $value = str_replace(
             array("jpeg", "png"), array("JPEG", "PNG"), $value
@@ -248,7 +248,7 @@ class Transformations
      *
      * @return array [field_name][field_key] = field_value
      */
-    public function getMime($db, $table, $strict = false, $fullName = false)
+    public static function getMIME($db, $table, $strict = false, $fullName = false)
     {
         $relation = new Relation();
         $cfgRelation = $relation->getRelationsParam();
@@ -287,7 +287,7 @@ class Transformations
             // convert mimetype to new format (f.e. Text_Plain, etc)
             $delimiter_space = '- ';
             $delimiter = "_";
-            $values['mimetype'] = $this->fixUpMime($values['mimetype']);
+            $values['mimetype'] = self::fixupMIME($values['mimetype']);
 
             // For transformation of form
             // output/image_jpeg__inline.inc.php
@@ -299,13 +299,13 @@ class Transformations
                 $values['transformation'] = $dir[1];
             }
 
-            $values['transformation'] = $this->fixUpMime($values['transformation']);
+            $values['transformation'] = self::fixupMIME($values['transformation']);
             $values['transformation'] = $subdir . $values['transformation'];
             $result[$column] = $values;
         }
 
         return $result;
-    }
+    } // end of the 'getMIME()' function
 
     /**
      * Set a single mimetype to a certain value.
@@ -325,16 +325,8 @@ class Transformations
      *
      * @return boolean  true, if comment-query was made.
      */
-    public function setMime(
-        $db,
-        $table,
-        $key,
-        $mimetype,
-        $transformation,
-        $transformationOpts,
-        $inputTransform,
-        $inputTransformOpts,
-        $forcedelete = false
+    public static function setMIME($db, $table, $key, $mimetype, $transformation,
+        $transformationOpts, $inputTransform, $inputTransformOpts, $forcedelete = false
     ) {
         $relation = new Relation();
         $cfgRelation = $relation->getRelationsParam();
@@ -423,7 +415,7 @@ class Transformations
         }
 
         return false;
-    }
+    } // end of 'setMIME()' function
 
 
     /**
@@ -440,7 +432,7 @@ class Transformations
      *
      * @return boolean State of the query execution
      */
-    public function clear($db, $table = '', $column = '')
+    public static function clear($db, $table = '', $column = '')
     {
         $relation = new Relation();
         $cfgRelation = $relation->getRelationsParam();

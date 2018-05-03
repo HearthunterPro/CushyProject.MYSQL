@@ -8,10 +8,8 @@
 
 namespace PhpMyAdmin\Plugins;
 
-use PhpMyAdmin\Export;
 use PhpMyAdmin\Properties\Plugins\ExportPluginProperties;
 use PhpMyAdmin\Relation;
-use PhpMyAdmin\Transformations;
 
 /**
  * Provides a common interface that will have to be implemented by all of the
@@ -37,23 +35,11 @@ abstract class ExportPlugin
     protected $relation;
 
     /**
-     * @var Export $export
-     */
-    protected $export;
-
-    /**
-     * @var Transformations
-     */
-    protected $transformations;
-
-    /**
      * Constructor
      */
     public function __construct()
     {
         $this->relation = new Relation();
-        $this->export = new Export();
-        $this->transformations = new Transformations();
     }
 
     /**

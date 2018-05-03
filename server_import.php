@@ -26,11 +26,9 @@ $scripts->addFile('import.js');
  */
 require 'libraries/server_common.inc.php';
 
-$import = new Import();
-
 $response = Response::getInstance();
 $response->addHTML(
-    $import->get(
+    Import::get(
         'server', $db, $table, $max_upload_size
     )
 );

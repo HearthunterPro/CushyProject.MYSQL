@@ -30,7 +30,6 @@ class ImportSql extends ImportPlugin
      */
     public function __construct()
     {
-        parent::__construct();
         $this->setProperties();
     }
 
@@ -134,7 +133,7 @@ class ImportSql extends ImportPlugin
             if (empty($statement)) {
 
                 // Importing new data.
-                $newData = $this->import->getNextChunk();
+                $newData = Import::getNextChunk();
 
                 // Subtract data we didn't handle yet and stop processing.
                 if ($newData === false) {
@@ -156,19 +155,19 @@ class ImportSql extends ImportPlugin
             }
 
             // Executing the query.
-            $this->import->runQuery($statement, $statement, $sql_data);
+            Import::runQuery($statement, $statement, $sql_data);
         }
 
         // Extracting remaining statements.
         while ((!$error) && (!$timeout_passed) && (!empty($bq->query))) {
             $statement = $bq->extract(true);
             if (!empty($statement)) {
-                $this->import->runQuery($statement, $statement, $sql_data);
+                Import::runQuery($statement, $statement, $sql_data);
             }
         }
 
         // Finishing.
-        $this->import->runQuery('', '', $sql_data);
+        Import::runQuery('', '', $sql_data);
     }
 
     /**

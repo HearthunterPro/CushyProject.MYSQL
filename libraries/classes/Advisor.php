@@ -128,7 +128,7 @@ class Advisor
      *
      * @return Advisor
      */
-    public function setVariables(array $variables): self
+    public function setVariables(array $variables)
     {
         $this->variables = $variables;
 
@@ -143,7 +143,7 @@ class Advisor
      *
      * @return $this
      */
-    public function setVariable($variable, $value): self
+    public function setVariable($variable, $value)
     {
         $this->variables[$variable] = $value;
 
@@ -167,7 +167,7 @@ class Advisor
      *
      * @return Advisor
      */
-    public function setParseResult(array $parseResult): self
+    public function setParseResult(array $parseResult)
     {
         $this->parseResult = $parseResult;
 
@@ -191,7 +191,7 @@ class Advisor
      *
      * @return Advisor
      */
-    public function setRunResult(array $runResult): self
+    public function setRunResult(array $runResult)
     {
         $this->runResult = $runResult;
 
@@ -203,7 +203,7 @@ class Advisor
      *
      * @return array with run and parse results
      */
-    public function run(): array
+    public function run()
     {
         // HowTo: A simple Advisory system in 3 easy steps.
 
@@ -236,12 +236,12 @@ class Advisor
     /**
      * Stores current error in run results.
      *
-     * @param string     $description description of an error.
-     * @param \Throwable $exception   exception raised
+     * @param string    $description description of an error.
+     * @param Exception $exception   exception raised
      *
      * @return void
      */
-    public function storeError(string $description, \Throwable $exception): void
+    public function storeError($description, $exception)
     {
         $this->runResult['errors'][] = $description
             . ' '
@@ -256,7 +256,7 @@ class Advisor
      *
      * @return boolean
      */
-    public function runRules(): bool
+    public function runRules()
     {
         $this->setRunResult(
             array(
@@ -332,7 +332,7 @@ class Advisor
      *
      * @return string
      */
-    public static function escapePercent(string $str): string
+    public static function escapePercent($str)
     {
         return preg_replace('/%( |,|\.|$|\(|\)|<|>)/', '%%\1', $str);
     }
@@ -345,7 +345,7 @@ class Advisor
      *
      * @return string
      */
-    public function translate(string $str, ?string $param = null): string
+    public function translate($str, $param = null)
     {
         $string = _gettext(self::escapePercent($str));
         if (! is_null($param)) {
@@ -363,7 +363,7 @@ class Advisor
      *
      * @return string[]
      */
-    public static function splitJustification(array $rule): array
+    public static function splitJustification(array $rule)
     {
         $jst = preg_split('/\s*\|\s*/', $rule['justification'], 2);
         if (count($jst) > 1) {
@@ -380,7 +380,7 @@ class Advisor
      *
      * @return void
      */
-    public function addRule(string $type, array $rule): void
+    public function addRule($type, array $rule)
     {
         switch ($type) {
         case 'notfired':
@@ -436,7 +436,7 @@ class Advisor
      *
      * @return string Replacement value
      */
-    private function replaceLinkURL(array $matches): string
+    private function replaceLinkURL(array $matches)
     {
         return 'href="' . Core::linkURL($matches[2]) . '" target="_blank" rel="noopener noreferrer"';
     }
@@ -448,7 +448,7 @@ class Advisor
      *
      * @return string Replacement value
      */
-    private function replaceVariable(array $matches): string
+    private function replaceVariable(array $matches)
     {
         return '<a href="server_variables.php' . Url::getCommon(array('filter' => $matches[1]))
                 . '">' . htmlspecialchars($matches[1]) . '</a>';
@@ -460,11 +460,11 @@ class Advisor
      *
      * @param string $expr expression to evaluate
      *
-     * @return mixed result of evaluated expression
+     * @return integer result of evaluated expression
      *
      * @throws Exception
      */
-    public function ruleExprEvaluate(string $expr)
+    public function ruleExprEvaluate($expr)
     {
         // Actually evaluate the code
         // This can throw exception
@@ -482,7 +482,7 @@ class Advisor
      *
      * @return array with parsed data
      */
-    public static function parseRulesFile(): array
+    public static function parseRulesFile()
     {
         $filename = 'libraries/advisory_rules.txt';
         $file = file($filename, FILE_IGNORE_NEW_LINES);
@@ -587,12 +587,12 @@ class Advisor
     /**
      * Formats interval like 10 per hour
      *
-     * @param float   $num       number to format
+     * @param integer $num       number to format
      * @param integer $precision required precision
      *
      * @return string formatted string
      */
-    public static function byTime(float $num, int $precision): string
+    public static function byTime($num, $precision)
     {
         if ($num >= 1) { // per second
             $per = __('per second');
@@ -625,7 +625,7 @@ class Advisor
      *
      * @return string  the formatted value
      */
-    public static function timespanFormat(int $seconds): string
+    public static function timespanFormat($seconds)
     {
         return Util::timespanFormat($seconds);
     }
@@ -641,7 +641,7 @@ class Advisor
      *
      * @return string the formatted value with unit
      */
-    public static function formatByteDown(float $value, int $limes = 6, int $comma = 0): string
+    public static function formatByteDown($value, $limes = 6, $comma = 0)
     {
         return implode(' ', Util::formatByteDown($value, $limes, $comma));
     }

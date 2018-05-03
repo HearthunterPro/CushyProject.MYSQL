@@ -32,7 +32,6 @@ class ExportJson extends ExportPlugin
      */
     public function __construct()
     {
-        parent::__construct();
         $this->setProperties();
     }
 
@@ -120,7 +119,7 @@ class ExportJson extends ExportPlugin
             'comment' => 'Export to JSON plugin for PHPMyAdmin',
         );
 
-        return $this->export->outputHandler(
+        return Export::outputHandler(
             '[' . $crlf . $this->encode($meta) . ',' . $crlf
         );
     }
@@ -134,7 +133,7 @@ class ExportJson extends ExportPlugin
     {
         global $crlf;
 
-        return $this->export->outputHandler(']' . $crlf);
+        return Export::outputHandler(']' . $crlf);
     }
 
     /**
@@ -158,7 +157,7 @@ class ExportJson extends ExportPlugin
             'name' => $db_alias
         );
 
-        return $this->export->outputHandler(
+        return Export::outputHandler(
             $this->encode($meta) . ',' . $crlf
         );
     }
@@ -214,7 +213,7 @@ class ExportJson extends ExportPlugin
         $this->initAlias($aliases, $db_alias, $table_alias);
 
         if (! $this->first) {
-            if (!$this->export->outputHandler(',')) {
+            if (!Export::outputHandler(',')) {
                 return false;
             }
         } else {
@@ -231,7 +230,7 @@ class ExportJson extends ExportPlugin
         );
         list($header, $footer) = explode('"@@DATA@@"', $buffer);
 
-        if (!$this->export->outputHandler($header . $crlf . '[' . $crlf)) {
+        if (!Export::outputHandler($header . $crlf . '[' . $crlf)) {
             return false;
         }
 
@@ -258,7 +257,7 @@ class ExportJson extends ExportPlugin
 
             // Output table name as comment if this is the first record of the table
             if ($record_cnt > 1) {
-                if (!$this->export->outputHandler(',' . $crlf)) {
+                if (!Export::outputHandler(',' . $crlf)) {
                     return false;
                 }
             }
@@ -269,12 +268,12 @@ class ExportJson extends ExportPlugin
                 $data[$columns[$i]] = $record[$i];
             }
 
-            if (!$this->export->outputHandler($this->encode($data))) {
+            if (!Export::outputHandler($this->encode($data))) {
                 return false;
             }
         }
 
-        if (!$this->export->outputHandler($crlf . ']' . $crlf . $footer . $crlf)) {
+        if (!Export::outputHandler($crlf . ']' . $crlf . $footer . $crlf)) {
             return false;
         }
 

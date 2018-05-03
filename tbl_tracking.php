@@ -22,8 +22,6 @@ $scripts->addFile('tbl_tracking.js');
 define('TABLE_MAY_BE_ABSENT', true);
 require './libraries/tbl_common.inc.php';
 
-$tracking = new Tracking();
-
 if (Tracker::isActive()
     && Tracker::isTracked($GLOBALS["db"], $GLOBALS["table"])
     && ! (isset($_REQUEST['toggle_activation'])
@@ -80,14 +78,14 @@ if (isset($_REQUEST['report']) || isset($_REQUEST['report_export'])) {
 
 // Prepare export
 if (isset($_REQUEST['report_export'])) {
-    $entries = $tracking->getEntries($data, $filter_ts_from, $filter_ts_to, $filter_users);
+    $entries = Tracking::getEntries($data, $filter_ts_from, $filter_ts_to, $filter_users);
 }
 
 // Export as file download
 if (isset($_REQUEST['report_export'])
     && $_REQUEST['export_type'] == 'sqldumpfile'
 ) {
-    $tracking->exportAsFileDownload($entries);
+    Tracking::exportAsFileDownload($entries);
 }
 
 $html = '<br />';
@@ -99,7 +97,7 @@ if (isset($_REQUEST['submit_mult'])) {
     if (! empty($_REQUEST['selected_versions'])) {
         if ($_REQUEST['submit_mult'] == 'delete_version') {
             foreach ($_REQUEST['selected_versions'] as $version) {
-                $tracking->deleteTrackingVersion($version);
+                Tracking::deleteTrackingVersion($version);
             }
             $html .= Message::success(
                 __('Tracking versions deleted successfully.')
@@ -113,45 +111,45 @@ if (isset($_REQUEST['submit_mult'])) {
 }
 
 if (isset($_REQUEST['submit_delete_version'])) {
-    $html .= $tracking->deleteTrackingVersion($_REQUEST['version']);
+    $html .= Tracking::deleteTrackingVersion($_REQUEST['version']);
 }
 
 // Create tracking version
 if (isset($_REQUEST['submit_create_version'])) {
-    $html .= $tracking->createTrackingVersion();
+    $html .= Tracking::createTrackingVersion();
 }
 
 // Deactivate tracking
 if (isset($_REQUEST['toggle_activation'])
     && $_REQUEST['toggle_activation'] == 'deactivate_now'
 ) {
-    $html .= $tracking->changeTracking('deactivate');
+    $html .= Tracking::changeTracking('deactivate');
 }
 
 // Activate tracking
 if (isset($_REQUEST['toggle_activation'])
     && $_REQUEST['toggle_activation'] == 'activate_now'
 ) {
-    $html .= $tracking->changeTracking('activate');
+    $html .= Tracking::changeTracking('activate');
 }
 
 // Export as SQL execution
 if (isset($_REQUEST['report_export']) && $_REQUEST['export_type'] == 'execution') {
-    $sql_result = $tracking->exportAsSqlExecution($entries);
+    $sql_result = Tracking::exportAsSqlExecution($entries);
     $msg = Message::success(__('SQL statements executed.'));
     $html .= $msg->getDisplay();
 }
 
 // Export as SQL dump
 if (isset($_REQUEST['report_export']) && $_REQUEST['export_type'] == 'sqldump') {
-    $html .= $tracking->exportAsSqlDump($entries);
+    $html .= Tracking::exportAsSqlDump($entries);
 }
 
 /*
  * Schema snapshot
  */
 if (isset($_REQUEST['snapshot'])) {
-    $html .= $tracking->getHtmlForSchemaSnapshot($url_query);
+    $html .= Tracking::getHtmlForSchemaSnapshot($url_query);
 }
 // end of snapshot report
 
@@ -161,11 +159,11 @@ if (isset($_REQUEST['snapshot'])) {
 if (isset($_REQUEST['report'])
     && (isset($_REQUEST['delete_ddlog']) || isset($_REQUEST['delete_dmlog']))
 ) {
-    $html .= $tracking->deleteTrackingReportRows($data);
+    $html .= Tracking::deleteTrackingReportRows($data);
 }
 
 if (isset($_REQUEST['report']) || isset($_REQUEST['report_export'])) {
-    $html .= $tracking->getHtmlForTrackingReport(
+    $html .= Tracking::getHtmlForTrackingReport(
         $url_query, $data, $url_params, $selection_schema, $selection_data,
         $selection_both, $filter_ts_to, $filter_ts_from, $filter_users
     );
@@ -175,9 +173,9 @@ if (isset($_REQUEST['report']) || isset($_REQUEST['report_export'])) {
 /*
  * List selectable tables
  */
-$selectable_tables_sql_result = $tracking->getSqlResultForSelectableTables();
+$selectable_tables_sql_result = Tracking::getSqlResultForSelectableTables();
 if ($GLOBALS['dbi']->numRows($selectable_tables_sql_result) > 0) {
-    $html .= $tracking->getHtmlForSelectableTables(
+    $html .= Tracking::getHtmlForSelectableTables(
         $selectable_tables_sql_result, $url_query
     );
 }
@@ -186,10 +184,10 @@ $html .= '<br />';
 /*
  * List versions of current table
  */
-$sql_result = $tracking->getListOfVersionsOfTable();
-$last_version = $tracking->getTableLastVersionNumber($sql_result);
+$sql_result = Tracking::getListOfVersionsOfTable();
+$last_version = Tracking::getTableLastVersionNumber($sql_result);
 if ($last_version > 0) {
-    $html .= $tracking->getHtmlForTableVersionDetails(
+    $html .= Tracking::getHtmlForTableVersionDetails(
         $sql_result, $last_version, $url_params,
         $url_query, $pmaThemeImage, $text_dir
     );
@@ -197,7 +195,7 @@ if ($last_version > 0) {
 
 $type = $GLOBALS['dbi']->getTable($GLOBALS['db'], $GLOBALS['table'])
     ->isView() ? 'view' : 'table';
-$html .= $tracking->getHtmlForDataDefinitionAndManipulationStatements(
+$html .= Tracking::getHtmlForDataDefinitionAndManipulationStatements(
     'tbl_tracking.php' . $url_query,
     $last_version,
     $GLOBALS['db'],

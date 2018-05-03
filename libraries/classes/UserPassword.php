@@ -22,19 +22,6 @@ use PhpMyAdmin\Util;
 class UserPassword
 {
     /**
-     * @var Privileges $serverPrivileges
-     */
-    private $serverPrivileges;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->serverPrivileges = new Privileges();
-    }
-
-    /**
      * Send the message as an ajax request
      *
      * @param array  $change_password_message Message to display
@@ -116,7 +103,7 @@ class UserPassword
         ) {
             $orig_auth_plugin = $_REQUEST['authentication_plugin'];
         } else {
-            $orig_auth_plugin = $this->serverPrivileges->getCurrentAuthenticationPlugin(
+            $orig_auth_plugin = Privileges::getCurrentAuthenticationPlugin(
                 'change', $username, $hostname
             );
         }
@@ -215,7 +202,7 @@ class UserPassword
                 $GLOBALS['dbi']->tryQuery('SET `old_passwords` = 2;');
             }
 
-            $hashedPassword = $this->serverPrivileges->getHashedPassword($_POST['pma_pw']);
+            $hashedPassword = Privileges::getHashedPassword($_POST['pma_pw']);
 
             $local_query = "UPDATE `mysql`.`user` SET"
                 . " `authentication_string` = '" . $hashedPassword

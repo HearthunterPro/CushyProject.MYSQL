@@ -39,7 +39,6 @@ class ExportPdf extends ExportPlugin
      * @var Pdf
      */
     private $_pdf;
-
     /**
      * PDF Report Title
      *
@@ -52,8 +51,6 @@ class ExportPdf extends ExportPlugin
      */
     public function __construct()
     {
-        parent::__construct();
-
         // initialize the specific export PDF variables
         $this->initSpecificVariables();
 
@@ -154,7 +151,7 @@ class ExportPdf extends ExportPlugin
         $pdf = $this->_getPdf();
 
         // instead of $pdf->Output():
-        return $this->export->outputHandler($pdf->getPDFData());
+        return Export::outputHandler($pdf->getPDFData());
     }
 
     /**

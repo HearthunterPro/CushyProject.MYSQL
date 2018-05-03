@@ -191,35 +191,6 @@ class Results
     private $relation;
 
     /**
-     * @var Transformations
-     */
-    private $transformations;
-
-    /**
-     * Constructor for PhpMyAdmin\Display\Results class
-     *
-     * @param string $db        the database name
-     * @param string $table     the table name
-     * @param string $goto      the URL to go back in case of errors
-     * @param string $sql_query the SQL query
-     *
-     * @access  public
-     */
-    public function __construct($db, $table, $goto, $sql_query)
-    {
-        $this->relation = new Relation();
-        $this->transformations = new Transformations();
-
-        $this->_setDefaultTransformations();
-
-        $this->__set('db', $db);
-        $this->__set('table', $table);
-        $this->__set('goto', $goto);
-        $this->__set('sql_query', $sql_query);
-        $this->__set('unique_id', rand());
-    }
-
-    /**
      * Get any property of this class
      *
      * @param string $property name of the property
@@ -246,6 +217,29 @@ class Results
         if (array_key_exists($property, $this->_property_array)) {
             $this->_property_array[$property] = $value;
         }
+    }
+
+    /**
+     * Constructor for PhpMyAdmin\Display\Results class
+     *
+     * @param string $db        the database name
+     * @param string $table     the table name
+     * @param string $goto      the URL to go back in case of errors
+     * @param string $sql_query the SQL query
+     *
+     * @access  public
+     */
+    public function __construct($db, $table, $goto, $sql_query)
+    {
+        $this->relation = new Relation();
+
+        $this->_setDefaultTransformations();
+
+        $this->__set('db', $db);
+        $this->__set('table', $table);
+        $this->__set('goto', $goto);
+        $this->__set('sql_query', $sql_query);
+        $this->__set('unique_id', rand());
     }
 
     /**
@@ -2749,7 +2743,7 @@ class Results
             ) {
                 $mimeMap = array_merge(
                     $mimeMap,
-                    $this->transformations->getMime($this->__get('db'), $meta->orgtable, false, true)
+                    Transformations::getMIME($this->__get('db'), $meta->orgtable, false, true)
                 );
                 $added[$orgFullTableName] = true;
             }
@@ -2894,14 +2888,14 @@ class Results
                     if (@file_exists($include_file)) {
 
                         include_once $include_file;
-                        $class_name = $this->transformations->getClassName($include_file);
+                        $class_name = Transformations::getClassName($include_file);
                         // todo add $plugin_manager
                         $plugin_manager = null;
                         $transformation_plugin = new $class_name(
                             $plugin_manager
                         );
 
-                        $transform_options = $this->transformations->getOptions(
+                        $transform_options = Transformations::getOptions(
                             isset(
                                 $mime_map[$orgFullColName]
                                 ['transformation_options']
@@ -2934,7 +2928,7 @@ class Results
                 $transformation_plugin = new $this->transformation_info
                     [$dbLower][$tblLower][$nameLower][1](null);
 
-                $transform_options = $this->transformations->getOptions(
+                $transform_options = Transformations::getOptions(
                     isset($mime_map[$orgFullColName]['transformation_options'])
                     ? $mime_map[$orgFullColName]['transformation_options']
                     : ''
@@ -4944,7 +4938,7 @@ class Results
 
         // Export link
         // (the url_query has extra parameters that won't be used to export)
-        // (the single_table parameter is used in \PhpMyAdmin\Export->getDisplay()
+        // (the single_table parameter is used in Export::getDisplay()
         //  to hide the SQL and the structure export dialogs)
         // If the parser found a PROCEDURE clause
         // (most probably PROCEDURE ANALYSE()) it makes no sense to
@@ -5301,11 +5295,11 @@ class Results
                     // user chose "relational key" in the display options, so
                     // the title contains the display field
                     $title = (! empty($dispval))
-                        ? htmlspecialchars($dispval)
+                        ? ' title="' . htmlspecialchars($dispval) . '"'
                         : '';
 
                 } else {
-                    $title = htmlspecialchars($data);
+                    $title = ' title="' . htmlspecialchars($data) . '"';
                 }
 
                 $_url_params = array(
@@ -5320,10 +5314,14 @@ class Results
                         . $where_comparison,
                 );
 
+                $result .= '<a class="ajax" href="sql.php'
+                    . Url::getCommon($_url_params)
+                    . '"' . $title . '>';
+
                 if ($transformation_plugin != $default_function) {
                     // always apply a transformation on the real data,
                     // not on the display field
-                    $message = $transformation_plugin->applyTransformation(
+                    $result .= $transformation_plugin->applyTransformation(
                         $data,
                         $transform_options,
                         $meta
@@ -5335,18 +5333,14 @@ class Results
                     ) {
                         // user chose "relational display field" in the
                         // display options, so show display field in the cell
-                        $message = $default_function($dispval);
+                        $result .= $default_function($dispval);
                     } else {
                         // otherwise display data in the cell
-                        $message = $default_function($data);
+                        $result .= $default_function($data);
                     }
 
                 }
-                $result .= Util::linkOrButton(
-                    'sql.php' . Url::getCommon($_url_params),
-                    $message,
-                    array('class' => 'ajax', 'title' => $title)
-                );
+                $result .= '</a>';
             }
 
         } else {

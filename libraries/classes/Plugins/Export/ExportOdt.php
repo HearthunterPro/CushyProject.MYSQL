@@ -18,6 +18,7 @@ use PhpMyAdmin\Properties\Options\Groups\OptionsPropertyRootGroup;
 use PhpMyAdmin\Properties\Options\Items\BoolPropertyItem;
 use PhpMyAdmin\Properties\Options\Items\RadioPropertyItem;
 use PhpMyAdmin\Properties\Options\Items\TextPropertyItem;
+use PhpMyAdmin\Relation;
 use PhpMyAdmin\Transformations;
 use PhpMyAdmin\Util;
 
@@ -167,7 +168,7 @@ class ExportOdt extends ExportPlugin
         $GLOBALS['odt_buffer'] .= '</office:text>'
             . '</office:body>'
             . '</office:document-content>';
-        if (!$this->export->outputHandler(
+        if (!Export::outputHandler(
             OpenDocument::create(
                 'application/vnd.oasis.opendocument.text',
                 $GLOBALS['odt_buffer']
@@ -505,7 +506,7 @@ class ExportOdt extends ExportPlugin
             $GLOBALS['odt_buffer'] .= '<table:table-cell office:value-type="string">'
                 . '<text:p>' . __('MIME type') . '</text:p>'
                 . '</table:table-cell>';
-            $mime_map = $this->transformations->getMime($db, $table, true);
+            $mime_map = Transformations::getMIME($db, $table, true);
         }
         $GLOBALS['odt_buffer'] .= '</table:table-row>';
 

@@ -7,7 +7,6 @@
  */
 namespace PhpMyAdmin\Twig;
 
-use PhpMyAdmin\Server\Privileges;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -25,11 +24,10 @@ class ServerPrivilegesExtension extends AbstractExtension
      */
     public function getFunctions()
     {
-        $serverPrivileges = new Privileges();
         return array(
             new TwigFunction(
                 'ServerPrivileges_formatPrivilege',
-                [$serverPrivileges, 'formatPrivilege'],
+                'PhpMyAdmin\Server\Privileges::formatPrivilege',
                 array('is_safe' => array('html'))
             ),
         );

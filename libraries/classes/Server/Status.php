@@ -94,7 +94,6 @@ class Status
      */
     public static function getHtmlForReplicationInfo()
     {
-        $replicationGui = new ReplicationGui();
         $retval = '<p class="notice clearfloat">';
         if ($GLOBALS['replication_info']['master']['status']
             && $GLOBALS['replication_info']['slave']['status']
@@ -128,7 +127,7 @@ class Status
             if (isset($GLOBALS['replication_info'][$type]['status'])
                 && $GLOBALS['replication_info'][$type]['status']
             ) {
-                $retval .= $replicationGui->getHtmlForReplicationStatusTable($type);
+                $retval .= ReplicationGui::getHtmlForReplicationStatusTable($type);
             }
         }
 

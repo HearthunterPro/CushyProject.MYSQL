@@ -32,11 +32,6 @@ class Pdf extends PdfLib
     private $relation;
 
     /**
-     * @var Transformations
-     */
-    private $transformations;
-
-    /**
      * Constructs PDF and configures standard parameters.
      *
      * @param string  $orientation page orientation
@@ -69,7 +64,6 @@ class Pdf extends PdfLib
             $pdfa
         );
         $this->relation = new Relation();
-        $this->transformations = new Transformations();
     }
 
     /**
@@ -563,7 +557,7 @@ class Pdf extends PdfLib
             $comments = $this->relation->getComments($db, $table);
         }
         if ($do_mime && $cfgRelation['mimework']) {
-            $mime_map = $this->transformations->getMime($db, $table, true);
+            $mime_map = Transformations::getMIME($db, $table, true);
         }
 
         $columns = $GLOBALS['dbi']->getColumns($db, $table);
@@ -829,7 +823,7 @@ class Pdf extends PdfLib
         }
 
         for ($i = 0; $i < $this->numFields; $i++) {
-            if (!array_key_exists($i, $colFits)) {
+            if (!in_array($i, array_keys($colFits))) {
                 $this->tablewidths[$i] = $this->sColWidth + $surplusToAdd;
             }
             if ($this->display_column[$i] == false) {

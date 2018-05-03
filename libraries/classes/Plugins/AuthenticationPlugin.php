@@ -42,19 +42,6 @@ abstract class AuthenticationPlugin
     public $password = '';
 
     /**
-     * @var IpAllowDeny
-     */
-    protected $ipAllowDeny;
-
-    /**
-     * AuthenticationPlugin constructor.
-     */
-    public function __construct()
-    {
-        $this->ipAllowDeny = new IpAllowDeny();
-    }
-
-    /**
      * Displays authentication form
      *
      * @return boolean
@@ -280,21 +267,21 @@ abstract class AuthenticationPlugin
             $allowDeny_forbidden         = false; // default
             if ($cfg['Server']['AllowDeny']['order'] == 'allow,deny') {
                 $allowDeny_forbidden     = true;
-                if ($this->ipAllowDeny->allow()) {
+                if (IpAllowDeny::allowDeny('allow')) {
                     $allowDeny_forbidden = false;
                 }
-                if ($this->ipAllowDeny->deny()) {
+                if (IpAllowDeny::allowDeny('deny')) {
                     $allowDeny_forbidden = true;
                 }
             } elseif ($cfg['Server']['AllowDeny']['order'] == 'deny,allow') {
-                if ($this->ipAllowDeny->deny()) {
+                if (IpAllowDeny::allowDeny('deny')) {
                     $allowDeny_forbidden = true;
                 }
-                if ($this->ipAllowDeny->allow()) {
+                if (IpAllowDeny::allowDeny('allow')) {
                     $allowDeny_forbidden = false;
                 }
             } elseif ($cfg['Server']['AllowDeny']['order'] == 'explicit') {
-                if ($this->ipAllowDeny->allow() && ! $this->ipAllowDeny->deny()) {
+                if (IpAllowDeny::allowDeny('allow') && ! IpAllowDeny::allowDeny('deny')) {
                     $allowDeny_forbidden = false;
                 } else {
                     $allowDeny_forbidden = true;

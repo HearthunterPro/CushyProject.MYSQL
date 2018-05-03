@@ -35,7 +35,6 @@ class ImportCsv extends AbstractImportCsv
      */
     public function __construct()
     {
-        parent::__construct();
         $this->setProperties();
     }
 
@@ -243,7 +242,7 @@ class ImportCsv extends AbstractImportCsv
         $max_cols = 0;
         $csv_terminated_len = mb_strlen($csv_terminated);
         while (!($finished && $i >= $len) && !$error && !$timeout_passed) {
-            $data = $this->import->getNextChunk();
+            $data = Import::getNextChunk();
             if ($data === false) {
                 // subtract data we didn't handle yet and stop processing
                 $GLOBALS['offset'] -= strlen($buffer);
@@ -574,7 +573,7 @@ class ImportCsv extends AbstractImportCsv
                          * @todo maybe we could add original line to verbose
                          * SQL in comment
                          */
-                        $this->import->runQuery($sql, $sql, $sql_data);
+                        Import::runQuery($sql, $sql, $sql_data);
                     }
 
                     $line++;
@@ -627,7 +626,7 @@ class ImportCsv extends AbstractImportCsv
 
             /* Obtain the best-fit MySQL types for each column */
             $analyses = array();
-            $analyses[] = $this->import->analyzeTable($tables[0]);
+            $analyses[] = Import::analyzeTable($tables[0]);
 
             /**
              * string $db_name (no backquotes)
@@ -650,14 +649,14 @@ class ImportCsv extends AbstractImportCsv
             $create = null;
 
             /* Created and execute necessary SQL statements from data */
-            $this->import->buildSql($db_name, $tables, $analyses, $create, $options, $sql_data);
+            Import::buildSql($db_name, $tables, $analyses, $create, $options, $sql_data);
 
             unset($tables);
             unset($analyses);
         }
 
         // Commit any possible data in buffers
-        $this->import->runQuery('', '', $sql_data);
+        Import::runQuery('', '', $sql_data);
 
         if (count($values) != 0 && !$error) {
             $message = Message::error(

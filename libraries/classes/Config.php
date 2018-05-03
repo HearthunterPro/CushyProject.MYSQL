@@ -32,56 +32,56 @@ class Config
     /**
      * @var string  default config source
      */
-    public $default_source = './libraries/config.default.php';
+    var $default_source = './libraries/config.default.php';
 
     /**
      * @var array   default configuration settings
      */
-    public $default = array();
+    var $default = array();
 
     /**
      * @var array   configuration settings, without user preferences applied
      */
-    public $base_settings = array();
+    var $base_settings = array();
 
     /**
      * @var array   configuration settings
      */
-    public $settings = array();
+    var $settings = array();
 
     /**
      * @var string  config source
      */
-    public $source = '';
+    var $source = '';
 
     /**
      * @var int     source modification time
      */
-    public $source_mtime = 0;
-    public $default_source_mtime = 0;
-    public $set_mtime = 0;
+    var $source_mtime = 0;
+    var $default_source_mtime = 0;
+    var $set_mtime = 0;
 
     /**
      * @var boolean
      */
-    public $error_config_file = false;
+    var $error_config_file = false;
 
     /**
      * @var boolean
      */
-    public $error_config_default_file = false;
+    var $error_config_default_file = false;
 
     /**
      * @var array
      */
-    public $default_server = array();
+    var $default_server = array();
 
     /**
      * @var boolean whether init is done or not
      * set this to false to force some initial checks
      * like checking for required functions
      */
-    public $done = false;
+    var $done = false;
 
     /**
      * @var UserPreferences
@@ -93,7 +93,7 @@ class Config
      *
      * @param string $source source to read config from
      */
-    public function __construct(?string $source = null)
+    public function __construct($source = null)
     {
         $this->settings = array('is_setup' => false);
 
@@ -114,9 +114,9 @@ class Config
      *
      * @return void
      */
-    public function checkSystem(): void
+    public function checkSystem()
     {
-        $this->set('PMA_VERSION', '5.0.0-dev');
+        $this->set('PMA_VERSION', '4.8.0.1');
         /* Major version */
         $this->set(
             'PMA_MAJOR_VERSION',
@@ -137,7 +137,7 @@ class Config
      *
      * @return void
      */
-    public function checkOutputCompression(): void
+    public function checkOutputCompression()
     {
         // If zlib output compression is set in the php configuration file, no
         // output buffering should be run
@@ -158,7 +158,7 @@ class Config
      *
      * @return void
      */
-    private function _setClientPlatform(string $user_agent): void
+    private function _setClientPlatform($user_agent)
     {
         if (mb_strstr($user_agent, 'Win')) {
             $this->set('PMA_USR_OS', 'Win');
@@ -183,7 +183,7 @@ class Config
      *
      * @return void
      */
-    public function checkClient(): void
+    public function checkClient()
     {
         if (Core::getenv('HTTP_USER_AGENT')) {
             $HTTP_USER_AGENT = Core::getenv('HTTP_USER_AGENT');
@@ -287,7 +287,7 @@ class Config
      *
      * @return void
      */
-    public function checkGd2(): void
+    public function checkGd2()
     {
         if ($this->get('GD2Available') == 'yes') {
             $this->set('PMA_IS_GD2', 1);
@@ -321,7 +321,7 @@ class Config
      *
      * @return void
      */
-    public function checkWebServer(): void
+    public function checkWebServer()
     {
         // some versions return Microsoft-IIS, some Microsoft/IIS
         // we could use a preg_match() but it's slower
@@ -340,7 +340,7 @@ class Config
      *
      * @return void
      */
-    public function checkWebServerOs(): void
+    public function checkWebServerOs()
     {
         // Default to Unix or Equiv
         $this->set('PMA_IS_WINDOWS', 0);
@@ -361,7 +361,7 @@ class Config
      *
      * @return boolean
      */
-    public function isGitRevision(): bool
+    public function isGitRevision()
     {
         if (!$this->get('ShowGitRevision')) {
             return false;
@@ -391,7 +391,7 @@ class Config
      *
      * @return void
      */
-    public function checkGitRevision(): void
+    public function checkGitRevision()
     {
         // find out if there is a .git folder
         $git_folder = '.git';
@@ -717,7 +717,7 @@ class Config
      *
      * @return boolean     success
      */
-    public function loadDefaults(): bool
+    public function loadDefaults()
     {
         $cfg = array();
         if (! @file_exists($this->default_source)) {
@@ -758,7 +758,7 @@ class Config
      *
      * @return bool
      */
-    public function load(?string $source = null): bool
+    public function load($source = null)
     {
         $this->loadDefaults();
 
@@ -848,7 +848,7 @@ class Config
      *
      * @return void
      */
-    private function _setConnectionCollation(): void
+    private function _setConnectionCollation()
     {
         $collation_connection = $this->get('DefaultConnectionCollation');
         if (! empty($collation_connection)
@@ -864,7 +864,7 @@ class Config
      *
      * @return void
      */
-    public function loadUserPreferences(): void
+    public function loadUserPreferences()
     {
         // index.php should load these settings, so that phpmyadmin.css.php
         // will have everything available in session cache
@@ -976,17 +976,14 @@ class Config
      * global config and added to a update queue, which is processed
      * by {@link loadUserPreferences()}
      *
-     * @param string|null $cookie_name   can be null
-     * @param string      $cfg_path      configuration path
-     * @param mixed       $new_cfg_value new value
-     * @param mixed       $default_value default value
+     * @param string $cookie_name   can be null
+     * @param string $cfg_path      configuration path
+     * @param mixed  $new_cfg_value new value
+     * @param mixed  $default_value default value
      *
-     * @return true|\PhpMyAdmin\Message
+     * @return true|PhpMyAdmin\Message
      */
-    public function setUserValue(
-        ?string $cookie_name,
-        string $cfg_path,
-        $new_cfg_value,
+    public function setUserValue($cookie_name, $cfg_path, $new_cfg_value,
         $default_value = null
     ) {
         $result = true;
@@ -1018,7 +1015,7 @@ class Config
      *
      * @return mixed
      */
-    public function getUserValue(string $cookie_name, $cfg_value)
+    public function getUserValue($cookie_name, $cfg_value)
     {
         $cookie_exists = isset($_COOKIE) && !empty($_COOKIE[$cookie_name]);
         $prefs_type = $this->get('user_preferences');
@@ -1041,7 +1038,7 @@ class Config
      *
      * @return void
      */
-    public function setSource(string $source): void
+    public function setSource($source)
     {
         $this->source = trim($source);
     }
@@ -1051,7 +1048,7 @@ class Config
      *
      * @return boolean whether source is valid or not
      */
-    public function checkConfigSource(): bool
+    public function checkConfigSource()
     {
         if (! $this->getSource()) {
             // no configuration file set at all
@@ -1096,7 +1093,7 @@ class Config
      *
      * @return void
      */
-    public function checkPermissions(): void
+    public function checkPermissions()
     {
         // Check for permissions (on platforms that support it):
         if ($this->get('CheckConfigurationPermissions') && @file_exists($this->getSource())) {
@@ -1123,7 +1120,7 @@ class Config
      *
      * @return void
      */
-    public function checkErrors(): void
+    public function checkErrors()
     {
         if ($this->error_config_default_file) {
             Core::fatalError(
@@ -1154,7 +1151,7 @@ class Config
      *
      * @return mixed value
      */
-    public function get(string $setting)
+    public function get($setting)
     {
         if (isset($this->settings[$setting])) {
             return $this->settings[$setting];
@@ -1170,7 +1167,7 @@ class Config
      *
      * @return void
      */
-    public function set(string $setting, $value): void
+    public function set($setting, $value)
     {
         if (! isset($this->settings[$setting])
             || $this->settings[$setting] !== $value
@@ -1185,7 +1182,7 @@ class Config
      *
      * @return string  config source
      */
-    public function getSource(): string
+    public function getSource()
     {
         return $this->source;
     }
@@ -1194,18 +1191,23 @@ class Config
      * returns a unique value to force a CSS reload if either the config
      * or the theme changes
      *
-     * @return int Summary of unix timestamps, to be unique on theme parameters
-     *             change
+     * @return int Summary of unix timestamps and fontsize,
+     * to be unique on theme parameters change
      */
-    public function getThemeUniqueValue(): int
+    public function getThemeUniqueValue()
     {
-        return (int) (
+        if (null !== $this->get('FontSize')) {
+            $fontsize = intval($this->get('FontSize'));
+        } else {
+            $fontsize = 0;
+        }
+        return (
+            $fontsize +
             $this->source_mtime +
             $this->default_source_mtime +
             $this->get('user_preferences_mtime') +
             $GLOBALS['PMA_Theme']->mtime_info +
-            $GLOBALS['PMA_Theme']->filesize_info
-        );
+            $GLOBALS['PMA_Theme']->filesize_info);
     }
 
     /**
@@ -1213,7 +1215,7 @@ class Config
      *
      * @return void
      */
-    public function checkUpload(): void
+    public function checkUpload()
     {
         if (!ini_get('file_uploads')) {
             $this->set('enable_upload', false);
@@ -1236,7 +1238,7 @@ class Config
      *
      * @return void
      */
-    public function checkUploadSize(): void
+    public function checkUploadSize()
     {
         if (! $filesize = ini_get('upload_max_filesize')) {
             $filesize = "5M";
@@ -1259,8 +1261,9 @@ class Config
      *
      * @return bool
      */
-    public function isHttps(): bool
+    public function isHttps()
     {
+
         if (null !== $this->get('is_https')) {
             return $this->get('is_https');
         }
@@ -1297,7 +1300,7 @@ class Config
      *
      * @return string
      */
-    public function getRootPath(): string
+    public function getRootPath()
     {
         static $cookie_path = null;
 
@@ -1344,7 +1347,7 @@ class Config
      *
      * @return void
      */
-    public function enableBc(): void
+    public function enableBc()
     {
         $GLOBALS['cfg']             = $this->settings;
         $GLOBALS['default_server']  = $this->default_server;
@@ -1373,13 +1376,119 @@ class Config
     }
 
     /**
+     * returns options for font size selection
+     *
+     * @param string $current_size current selected font size with unit
+     *
+     * @return array selectable font sizes
+     */
+    protected static function getFontsizeOptions($current_size = '82%')
+    {
+        $unit = preg_replace('/[0-9.]*/', '', $current_size);
+        $value = preg_replace('/[^0-9.]*/', '', $current_size);
+
+        $factors = array();
+        $options = array();
+        $options["$value"] = $value . $unit;
+
+        if ($unit === '%') {
+            $factors[] = 1;
+            $factors[] = 5;
+            $factors[] = 10;
+            $options['100'] = '100%';
+        } elseif ($unit === 'em') {
+            $factors[] = 0.05;
+            $factors[] = 0.2;
+            $factors[] = 1;
+        } elseif ($unit === 'pt') {
+            $factors[] = 0.5;
+            $factors[] = 2;
+        } elseif ($unit === 'px') {
+            $factors[] = 1;
+            $factors[] = 5;
+            $factors[] = 10;
+        } else {
+            //unknown font size unit
+            $factors[] = 0.05;
+            $factors[] = 0.2;
+            $factors[] = 1;
+            $factors[] = 5;
+            $factors[] = 10;
+        }
+
+        foreach ($factors as $key => $factor) {
+            $option_inc = $value + $factor;
+            $option_dec = $value - $factor;
+            while (count($options) < 21) {
+                $options["$option_inc"] = $option_inc . $unit;
+                if ($option_dec > $factors[0]) {
+                    $options["$option_dec"] = $option_dec . $unit;
+                }
+                $option_inc += $factor;
+                $option_dec -= $factor;
+                if (isset($factors[$key + 1])
+                    && $option_inc >= $value + $factors[$key + 1]
+                ) {
+                    break;
+                }
+            }
+        }
+        ksort($options);
+        return $options;
+    }
+
+    /**
+     * returns html selectbox for font sizes
+     *
+     * @return string html selectbox
+     */
+    protected static function getFontsizeSelection()
+    {
+        $current_size = $GLOBALS['PMA_Config']->get('FontSize');
+        // for the case when there is no config file (this is supported)
+        if (empty($current_size)) {
+            $current_size = '82%';
+        }
+        $options = Config::getFontsizeOptions($current_size);
+
+        $return = '<label for="select_fontsize">' . __('Font size')
+            . ':</label>' . "\n"
+            . '<select name="set_fontsize" id="select_fontsize"'
+            . ' class="autosubmit">' . "\n";
+        foreach ($options as $option) {
+            $return .= '<option value="' . $option . '"';
+            if ($option == $current_size) {
+                $return .= ' selected="selected"';
+            }
+            $return .= '>' . $option . '</option>' . "\n";
+        }
+        $return .= '</select>';
+
+        return $return;
+    }
+
+    /**
+     * return complete font size selection form
+     *
+     * @return string html selectbox
+     */
+    public static function getFontsizeForm()
+    {
+        return '<form name="form_fontsize_selection" id="form_fontsize_selection"'
+            . ' method="post" action="index.php" class="disableAjax">' . "\n"
+            . Url::getHiddenInputs() . "\n"
+            . Config::getFontsizeSelection() . "\n"
+            . '</form>';
+    }
+
+    /**
      * removes cookie
      *
      * @param string $cookie name of cookie to remove
      *
      * @return boolean result of setcookie()
      */
-    public function removeCookie(string $cookie): bool
+    public function removeCookie($cookie)
     {
         if (defined('TESTSUITE')) {
             if (isset($_COOKIE[$cookie])) {
@@ -1409,13 +1518,9 @@ class Config
      *
      * @return boolean result of setcookie()
      */
-    public function setCookie(
-        string $cookie,
-        $value,
-        ?string $default = null,
-        ?int $validity = null,
-        bool $httponly = true
-    ): bool {
+    public function setCookie($cookie, $value, $default = null,
+        $validity = null, $httponly = true
+    ) {
         if (strlen($value) > 0 && null !== $default && $value === $default
         ) {
             // default value is used
@@ -1467,9 +1572,11 @@ class Config
      * Error handler to catch fatal errors when loading configuration
      * file
      *
+     *
+     * PMA_Config_fatalErrorHandler
      * @return void
      */
-    public static function fatalErrorHandler(): void
+    public static function fatalErrorHandler()
     {
         if (!isset($GLOBALS['pma_config_loading'])
             || !$GLOBALS['pma_config_loading']
@@ -1500,7 +1607,7 @@ class Config
      *
      * @return string
      */
-    private static function _renderCustom(string $filename, string $id): string
+    private static function _renderCustom($filename, $id)
     {
         $retval = '';
         if (@file_exists($filename)) {
@@ -1519,7 +1626,7 @@ class Config
      *
      * @return string
      */
-    public static function renderFooter(): string
+    public static function renderFooter()
     {
         return self::_renderCustom(CUSTOM_FOOTER_FILE, 'pma_footer');
     }
@@ -1529,7 +1636,7 @@ class Config
      *
      * @return string
      */
-    public static function renderHeader(): string
+    public static function renderHeader()
     {
         return self::_renderCustom(CUSTOM_HEADER_FILE, 'pma_header');
     }
@@ -1541,7 +1648,7 @@ class Config
      *
      * @return string|null
      */
-    public function getTempDir(string $name): ?string
+    public function getTempDir($name)
     {
         static $temp_dir = array();
 
@@ -1569,9 +1676,9 @@ class Config
     /**
      * Returns temporary directory
      *
-     * @return string|null
+     * @return string
      */
-    public function getUploadTempDir(): ?string
+    public function getUploadTempDir()
     {
         // First try configured temp dir
         // Fallback to PHP upload_tmp_dir
@@ -1595,8 +1702,8 @@ class Config
      *
      * @return integer
      */
-    public function selectServer(): int
-    {
+    public function selectServer() {
+        $server = 0;
         $request = empty($_REQUEST['server']) ? 0 : $_REQUEST['server'];
 
         /**
@@ -1651,8 +1758,7 @@ class Config
      *
      * @return void
      */
-    public function checkServers(): void
-    {
+    public function checkServers() {
         // Do we have some server?
         if (! isset($this->settings['Servers']) || count($this->settings['Servers']) == 0) {
             // No server => create one with defaults

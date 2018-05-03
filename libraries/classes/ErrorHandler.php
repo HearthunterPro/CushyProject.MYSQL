@@ -97,7 +97,7 @@ class ErrorHandler
      *
      * @return void
      */
-    public function setHideLocation(bool $hide): void
+    public function setHideLocation($hide)
     {
         $this->hide_location = $hide;
     }
@@ -109,7 +109,7 @@ class ErrorHandler
      *
      * @return Error[]
      */
-    public function getErrors(bool $check = true): array
+    public function getErrors($check=true)
     {
         if ($check) {
             $this->checkSavedErrors();
@@ -123,7 +123,7 @@ class ErrorHandler
     *
     * @return Error[]
     */
-    public function getCurrentErrors(): array
+    public function getCurrentErrors()
     {
         return $this->errors;
     }
@@ -135,7 +135,7 @@ class ErrorHandler
      *
      * @return Error[]
      */
-    public function sliceErrors(int $count): array
+    public function sliceErrors($count)
     {
         $errors = $this->getErrors(false);
         $this->errors = array_splice($errors, 0, $count);
@@ -155,12 +155,8 @@ class ErrorHandler
      *
      * @return void
      */
-    public function handleError(
-        int $errno,
-        string $errstr,
-        string $errfile,
-        int $errline
-    ): void {
+    public function handleError($errno, $errstr, $errfile, $errline)
+    {
         /**
          * Check if Error Control Operator (@) was used, but still show
          * user errors even in this case.
@@ -193,13 +189,8 @@ class ErrorHandler
      *
      * @return void
      */
-    public function addError(
-        string $errstr,
-        int $errno,
-        string $errfile,
-        int $errline,
-        bool $escape = true
-    ): void {
+    public function addError($errstr, $errno, $errfile, $errline, $escape = true)
+    {
         if ($escape) {
             $errstr = htmlspecialchars($errstr);
         }
@@ -251,7 +242,7 @@ class ErrorHandler
      *
      * @return void
      */
-    public function triggerError(string $errorInfo, ?int $errorNumber = null): void
+    public function triggerError($errorInfo, $errorNumber = null)
     {
         // we could also extract file and line from backtrace
         // and call handleError() directly
@@ -265,7 +256,7 @@ class ErrorHandler
      *
      * @return void
      */
-    protected function dispFatalError(Error $error): void
+    protected function dispFatalError($error)
     {
         if (! headers_sent()) {
             $this->dispPageStart($error);
@@ -280,7 +271,7 @@ class ErrorHandler
      *
      * @return void
      */
-    public function dispUserErrors(): void
+    public function dispUserErrors()
     {
         echo $this->getDispUserErrors();
     }
@@ -290,7 +281,7 @@ class ErrorHandler
      *
      * @return string
      */
-    public function getDispUserErrors(): string
+    public function getDispUserErrors()
     {
         $retval = '';
         foreach ($this->getErrors() as $error) {
@@ -308,7 +299,7 @@ class ErrorHandler
      *
      * @return void
      */
-    protected function dispPageStart(?Error $error = null): void
+    protected function dispPageStart($error = null)
     {
         Response::getInstance()->disable();
         echo '<html><head><title>';
@@ -325,7 +316,7 @@ class ErrorHandler
      *
      * @return void
      */
-    protected function dispPageEnd(): void
+    protected function dispPageEnd()
     {
         echo '</body></html>';
     }
@@ -335,7 +326,7 @@ class ErrorHandler
      *
      * @return string
      */
-    public function getDispErrors(): string
+    public function getDispErrors()
     {
         $retval = '';
         // display errors if SendErrorReports is set to 'ask'.
@@ -393,7 +384,7 @@ class ErrorHandler
      *
      * @return void
      */
-    public function dispErrors(): void
+    public function dispErrors()
     {
         echo $this->getDispErrors();
     }
@@ -403,7 +394,7 @@ class ErrorHandler
      *
      * @return void
      */
-    protected function checkSavedErrors(): void
+    protected function checkSavedErrors()
     {
         if (isset($_SESSION['errors'])) {
 
@@ -427,7 +418,7 @@ class ErrorHandler
      *
      * @return integer number of errors occurred
      */
-    public function countErrors(bool $check = true): int
+    public function countErrors($check=true)
     {
         return count($this->getErrors($check));
     }
@@ -437,7 +428,7 @@ class ErrorHandler
      *
      * @return integer number of user errors occurred
      */
-    public function countUserErrors(): int
+    public function countUserErrors()
     {
         $count = 0;
         if ($this->countErrors()) {
@@ -456,7 +447,7 @@ class ErrorHandler
      *
      * @return boolean
      */
-    public function hasUserErrors(): bool
+    public function hasUserErrors()
     {
         return (bool) $this->countUserErrors();
     }
@@ -466,7 +457,7 @@ class ErrorHandler
      *
      * @return boolean
      */
-    public function hasErrors(): bool
+    public function hasErrors()
     {
         return (bool) $this->countErrors();
     }
@@ -476,7 +467,7 @@ class ErrorHandler
      *
      * @return integer number of errors to be displayed
      */
-    public function countDisplayErrors(): int
+    public function countDisplayErrors()
     {
         if ($GLOBALS['cfg']['SendErrorReports'] != 'never') {
             return $this->countErrors();
@@ -490,7 +481,7 @@ class ErrorHandler
      *
      * @return boolean
      */
-    public function hasDisplayErrors(): bool
+    public function hasDisplayErrors()
     {
         return (bool) $this->countDisplayErrors();
     }
@@ -502,7 +493,7 @@ class ErrorHandler
     *
     * @return void
     */
-    public function savePreviousErrors(): void
+    public function savePreviousErrors()
     {
         unset($_SESSION['prev_errors']);
         $_SESSION['prev_errors'] = $GLOBALS['error_handler']->getCurrentErrors();
@@ -517,7 +508,7 @@ class ErrorHandler
      *
      *@return boolean true if there are errors to be "prompted", false otherwise
      */
-    public function hasErrorsForPrompt(): bool
+    public function hasErrorsForPrompt()
     {
         return (
             $GLOBALS['cfg']['SendErrorReports'] != 'never'
@@ -532,7 +523,7 @@ class ErrorHandler
      *
      * @return void
      */
-    public function reportErrors(): void
+    public function reportErrors()
     {
         // if there're no actual errors,
         if (!$this->hasErrors()

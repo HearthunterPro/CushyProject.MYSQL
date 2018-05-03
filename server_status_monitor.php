@@ -16,9 +16,6 @@ require_once 'libraries/replication.inc.php';
 
 $response = Response::getInstance();
 
-$statusMonitor = new Monitor();
-$statusData = new Data();
-
 /**
  * Ajax request
  */
@@ -30,7 +27,7 @@ if ($response->isAjax()) {
     if (isset($_REQUEST['chart_data'])) {
         switch($_REQUEST['type']) {
         case 'chartgrid': // Data for the monitor
-            $ret = $statusMonitor->getJsonForChartingData();
+            $ret = Monitor::getJsonForChartingData();
             $response->addJSON('message', $ret);
             exit;
         }
@@ -42,26 +39,26 @@ if ($response->isAjax()) {
         $end = intval($_REQUEST['time_end']);
 
         if ($_REQUEST['type'] == 'slow') {
-            $return = $statusMonitor->getJsonForLogDataTypeSlow($start, $end);
+            $return = Monitor::getJsonForLogDataTypeSlow($start, $end);
             $response->addJSON('message', $return);
             exit;
         }
 
         if ($_REQUEST['type'] == 'general') {
-            $return = $statusMonitor->getJsonForLogDataTypeGeneral($start, $end);
+            $return = Monitor::getJsonForLogDataTypeGeneral($start, $end);
             $response->addJSON('message', $return);
             exit;
         }
     }
 
     if (isset($_REQUEST['logging_vars'])) {
-        $loggingVars = $statusMonitor->getJsonForLoggingVars();
+        $loggingVars = Monitor::getJsonForLoggingVars();
         $response->addJSON('message', $loggingVars);
         exit;
     }
 
     if (isset($_REQUEST['query_analyzer'])) {
-        $return = $statusMonitor->getJsonForQueryAnalyzer();
+        $return = Monitor::getJsonForQueryAnalyzer();
         $response->addJSON('message', $return);
         exit;
     }
@@ -88,12 +85,18 @@ $scripts->addFile('jqplot/plugins/jqplot.byteFormatter.js');
 $scripts->addFile('server_status_monitor.js');
 $scripts->addFile('server_status_sorter.js');
 
+
+/**
+ * start output
+ */
+$serverStatusData = new Data();
+
 /**
  * Output
  */
 $response->addHTML('<div>');
-$response->addHTML($statusData->getMenuHtml());
-$response->addHTML($statusMonitor->getHtmlForMonitor($statusData));
-$response->addHTML($statusMonitor->getHtmlForClientSideDataAndLinks($statusData));
+$response->addHTML($serverStatusData->getMenuHtml());
+$response->addHTML(Monitor::getHtmlForMonitor($serverStatusData));
+$response->addHTML(Monitor::getHtmlForClientSideDataAndLinks($serverStatusData));
 $response->addHTML('</div>');
 exit;

@@ -22,6 +22,8 @@ use PhpMyAdmin\Url;
 use phpseclib\Crypt;
 use ReCaptcha;
 
+require_once './libraries/hash.lib.php';
+
 /**
  * Remember where to redirect the user
  * in case of an expired session.
@@ -54,7 +56,6 @@ class AuthenticationCookie extends AuthenticationPlugin
      */
     public function __construct()
     {
-        parent::__construct();
         $this->_use_openssl = ! class_exists('phpseclib\Crypt\Random');
     }
 

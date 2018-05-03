@@ -8,7 +8,6 @@
 
 namespace PhpMyAdmin\Plugins;
 
-use PhpMyAdmin\Import;
 use PhpMyAdmin\Properties\Plugins\ImportPluginProperties;
 
 /**
@@ -25,19 +24,6 @@ abstract class ImportPlugin
      * @var ImportPluginProperties
      */
     protected $properties;
-
-    /**
-     * @var Import
-     */
-    protected $import;
-
-    /**
-     * ImportPlugin constructor.
-     */
-    public function __construct()
-    {
-        $this->import = new Import();
-    }
 
     /**
      * Handles the whole import logic

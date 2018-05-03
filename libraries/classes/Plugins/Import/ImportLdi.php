@@ -39,7 +39,6 @@ class ImportLdi extends AbstractImportCsv
      */
     public function __construct()
     {
-        parent::__construct();
         $this->setProperties();
     }
 
@@ -171,8 +170,8 @@ class ImportLdi extends AbstractImportCsv
             $sql .= ')';
         }
 
-        $this->import->runQuery($sql, $sql, $sql_data);
-        $this->import->runQuery('', '', $sql_data);
+        Import::runQuery($sql, $sql, $sql_data);
+        Import::runQuery('', '', $sql_data);
         $finished = true;
     }
 }

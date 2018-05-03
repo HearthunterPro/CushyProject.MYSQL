@@ -2866,6 +2866,12 @@ $cfg['ThemeDefault'] = 'pmahomme';
  */
 $cfg['ThemePerServer'] = false;
 
+
+/**
+ * Font size to use by default
+ */
+$cfg['FontSize'] = '82%';
+
 /*******************************************************************************
  *
  */

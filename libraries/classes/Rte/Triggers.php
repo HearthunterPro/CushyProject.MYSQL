@@ -25,61 +25,20 @@ use PhpMyAdmin\Util;
 class Triggers
 {
     /**
-     * @var Export
-     */
-    private $export;
-
-    /**
-     * @var Footer
-     */
-    private $footer;
-
-    /**
-     * @var General
-     */
-    private $general;
-
-    /**
-     * @var RteList
-     */
-    private $rteList;
-
-    /**
-     * @var Words
-     */
-    private $words;
-
-    /**
-     * Triggers constructor.
-     */
-    public function __construct()
-    {
-        $this->export = new Export();
-        $this->footer = new Footer();
-        $this->general = new General();
-        $this->rteList = new RteList();
-        $this->words = new Words();
-    }
-
-    /**
      * Sets required globals
      *
      * @return void
      */
-    public function setGlobals()
+    public static function setGlobals()
     {
         global $action_timings, $event_manipulations;
 
         // Some definitions for triggers
-        $action_timings = array(
-            'BEFORE',
-            'AFTER',
-        );
-        $event_manipulations = array(
-            'INSERT',
-            'UPDATE',
-            'DELETE',
-        );
+        $action_timings      = array('BEFORE',
+                                     'AFTER');
+        $event_manipulations = array('INSERT',
+                                     'UPDATE',
+                                     'DELETE');
     }
 
     /**
@@ -87,34 +46,34 @@ class Triggers
      *
      * @return void
      */
-    public function main()
+    public static function main()
     {
         global $db, $table;
 
-        $this->setGlobals();
+        self::setGlobals();
         /**
          * Process all requests
          */
-        $this->handleEditor();
-        $this->export->triggers();
+        self::handleEditor();
+        Export::triggers();
         /**
          * Display a list of available triggers
          */
         $items = $GLOBALS['dbi']->getTriggers($db, $table);
-        echo $this->rteList->get('trigger', $items);
+        echo RteList::get('trigger', $items);
         /**
          * Display a link for adding a new trigger,
          * if the user has the necessary privileges
          */
-        echo $this->footer->triggers();
-    }
+        echo Footer::triggers();
+    } // end self::main()
 
     /**
      * Handles editor requests for adding or editing an item
      *
      * @return void
      */
-    public function handleEditor()
+    public static function handleEditor()
     {
         global $_REQUEST, $_POST, $errors, $db, $table;
 
@@ -123,13 +82,13 @@ class Triggers
         ) {
             $sql_query = '';
 
-            $item_query = $this->getQueryFromRequest();
+            $item_query = self::getQueryFromRequest();
 
             if (! count($errors)) { // set by PhpMyAdmin\Rte\Routines::getQueryFromRequest()
                 // Execute the created query
                 if (! empty($_REQUEST['editor_process_edit'])) {
                     // Backup the old trigger, in case something goes wrong
-                    $trigger = $this->getDataFromName($_REQUEST['item_original_name']);
+                    $trigger = self::getDataFromName($_REQUEST['item_original_name']);
                     $create_item = $trigger['create'];
                     $drop_item = $trigger['drop'] . ';';
                     $result = $GLOBALS['dbi']->tryQuery($drop_item);
@@ -153,7 +112,7 @@ class Triggers
                             // new one. Try to restore the backup query.
                             $result = $GLOBALS['dbi']->tryQuery($create_item);
 
-                            $errors = $this->general->checkResult(
+                            $errors = General::checkResult(
                                 $result,
                                 __(
                                     'Sorry, we failed to restore the dropped trigger.'
@@ -224,7 +183,7 @@ class Triggers
                         || ($trigger !== false && $table == $trigger['table'])
                     ) {
                         $insert = true;
-                        $response->addJSON('new_row', $this->rteList->getTriggerRow($trigger));
+                        $response->addJSON('new_row', RteList::getTriggerRow($trigger));
                         $response->addJSON(
                             'name',
                             htmlspecialchars(
@@ -255,33 +214,33 @@ class Triggers
         ) {
             // Get the data for the form (if any)
             if (! empty($_REQUEST['add_item'])) {
-                $title = $this->words->get('add');
-                $item = $this->getDataFromRequest();
+                $title = Words::get('add');
+                $item = self::getDataFromRequest();
                 $mode = 'add';
             } elseif (! empty($_REQUEST['edit_item'])) {
                 $title = __("Edit trigger");
                 if (! empty($_REQUEST['item_name'])
                     && empty($_REQUEST['editor_process_edit'])
                 ) {
-                    $item = $this->getDataFromName($_REQUEST['item_name']);
+                    $item = self::getDataFromName($_REQUEST['item_name']);
                     if ($item !== false) {
                         $item['item_original_name'] = $item['item_name'];
                     }
                 } else {
-                    $item = $this->getDataFromRequest();
+                    $item = self::getDataFromRequest();
                 }
                 $mode = 'edit';
             }
-            $this->general->sendEditor('TRI', $mode, $item, $title, $db);
+            General::sendEditor('TRI', $mode, $item, $title, $db);
         }
-    }
+    } // end self::handleEditor()
 
     /**
      * This function will generate the values that are required to for the editor
      *
      * @return array    Data necessary to create the editor.
      */
-    public function getDataFromRequest()
+    public static function getDataFromRequest()
     {
         $retval = array();
         $indices = array('item_name',
@@ -295,7 +254,7 @@ class Triggers
             $retval[$index] = isset($_REQUEST[$index]) ? $_REQUEST[$index] : '';
         }
         return $retval;
-    }
+    } // end self::getDataFromRequest()
 
     /**
      * This function will generate the values that are required to complete
@@ -305,7 +264,7 @@ class Triggers
      *
      * @return array Data necessary to create the editor.
      */
-    public function getDataFromName($name)
+    public static function getDataFromName($name)
     {
         global $db, $table, $_REQUEST;
 
@@ -330,19 +289,19 @@ class Triggers
             $retval['item_definer']            = $temp['definer'];
             return $retval;
         }
-    }
+    } // end self::getDataFromName()
 
     /**
      * Displays a form used to add/edit a trigger
      *
      * @param string $mode If the editor will be used to edit a trigger
      *                     or add a new one: 'edit' or 'add'.
-     * @param array  $item Data for the trigger returned by getDataFromRequest()
-     *                     or getDataFromName()
+     * @param array  $item Data for the trigger returned by self::getDataFromRequest()
+     *                     or self::getDataFromName()
      *
      * @return string HTML code for the editor.
      */
-    public function getEditorForm($mode, array $item)
+    public static function getEditorForm($mode, array $item)
     {
         global $db, $table, $event_manipulations, $action_timings;
 
@@ -457,14 +416,14 @@ class Triggers
         $retval .= "<!-- END " . $modeToUpper . " TRIGGER FORM -->\n\n";
 
         return $retval;
-    }
+    } // end self::getEditorForm()
 
     /**
      * Composes the query necessary to create a trigger from an HTTP request.
      *
      * @return string  The CREATE TRIGGER query.
      */
-    public function getQueryFromRequest()
+    public static function getQueryFromRequest()
     {
         global $_REQUEST, $db, $errors, $action_timings, $event_manipulations;
 
@@ -515,5 +474,5 @@ class Triggers
         }
 
         return $query;
-    }
+    } // end self::getQueryFromRequest()
 }

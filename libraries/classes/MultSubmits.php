@@ -25,19 +25,6 @@ use PhpMyAdmin\Util;
 class MultSubmits
 {
     /**
-     * @var Transformations
-     */
-    private $transformations;
-
-    /**
-     * MultSubmits constructor.
-     */
-    public function __construct()
-    {
-        $this->transformations = new Transformations();
-    }
-
-    /**
      * Gets url params
      *
      * @param string     $what             mult submit type
@@ -353,11 +340,11 @@ class MultSubmits
                 $result = $GLOBALS['dbi']->query($aQuery);
 
                 if ($queryType == 'drop_db') {
-                    $this->transformations->clear($selected[$i]);
+                    Transformations::clear($selected[$i]);
                 } elseif ($queryType == 'drop_tbl') {
-                    $this->transformations->clear($db, $selected[$i]);
+                    Transformations::clear($db, $selected[$i]);
                 } elseif ($queryType == 'drop_fld') {
-                    $this->transformations->clear($db, $table, $selected[$i]);
+                    Transformations::clear($db, $table, $selected[$i]);
                 }
             } // end if
         } // end for

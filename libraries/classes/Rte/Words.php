@@ -22,7 +22,7 @@ class Words
      *
      * @return string The requested string or an empty string, if not available
      */
-    public function get($index)
+    public static function get($index)
     {
         global $_PMA_RTE;
 
@@ -83,5 +83,5 @@ class Words
         }
 
         return isset($words[$index]) ? $words[$index] : '';
-    }
+    } // end self::get()
 }

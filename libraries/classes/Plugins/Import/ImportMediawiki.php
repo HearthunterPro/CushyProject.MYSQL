@@ -33,7 +33,6 @@ class ImportMediawiki extends ImportPlugin
      */
     public function __construct()
     {
-        parent::__construct();
         $this->setProperties();
     }
 
@@ -94,7 +93,7 @@ class ImportMediawiki extends ImportPlugin
         $cur_table_name = "";
 
         while (!$finished && !$error && !$timeout_passed) {
-            $data = $this->import->getNextChunk();
+            $data = Import::getNextChunk();
 
             if ($data === false) {
                 // Subtract data we didn't handle yet and stop processing
@@ -315,13 +314,13 @@ class ImportMediawiki extends ImportPlugin
 
             // Obtain the best-fit MySQL types for each column
             $analyses = array();
-            $analyses [] = $this->import->analyzeTable($tables[0]);
+            $analyses [] = Import::analyzeTable($tables[0]);
 
             $this->_executeImportTables($tables, $analyses, $sql_data);
         }
 
         // Commit any possible data in buffers
-        $this->import->runQuery('', '', $sql_data);
+        Import::runQuery('', '', $sql_data);
     }
 
     /**
@@ -394,7 +393,7 @@ class ImportMediawiki extends ImportPlugin
         $create = null;
 
         // Create and execute necessary SQL statements from data
-        $this->import->buildSql($db_name, $tables, $analyses, $create, $options, $sql_data);
+        Import::buildSql($db_name, $tables, $analyses, $create, $options, $sql_data);
 
         unset($tables);
         unset($analyses);

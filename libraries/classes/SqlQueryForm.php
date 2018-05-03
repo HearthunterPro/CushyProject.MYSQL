@@ -42,7 +42,7 @@ class SqlQueryForm
      * @usedby  tbl_structure.php
      * @usedby  tbl_tracking.php
      */
-    public function getHtml(
+    public static function getHtml(
         $query = true, $display_tab = false, $delimiter = ';'
     ) {
         $html = '';
@@ -96,7 +96,7 @@ class SqlQueryForm
 
         // display querybox
         if ($display_tab === 'full' || $display_tab === 'sql') {
-            $html .= $this->getHtmlForInsert(
+            $html .= self::getHtmlForInsert(
                 $query, $delimiter
             );
         }
@@ -105,7 +105,7 @@ class SqlQueryForm
         if ($display_tab === 'full') {
             $cfgBookmark = Bookmark::getParams($GLOBALS['cfg']['Server']['user']);
             if ($cfgBookmark) {
-                $html .= $this->getHtmlForBookmark();
+                $html .= self::getHtmlForBookmark();
             }
         }
 
@@ -128,8 +128,10 @@ class SqlQueryForm
      * @param string $query query to display in the textarea
      *
      * @return array ($legend, $query, $columns_list)
+     *
+     * @usedby  self::getHtmlForInsert()
      */
-    public function init($query)
+    public static function init($query)
     {
         $columns_list    = array();
         if (strlen($GLOBALS['db']) === 0) {
@@ -192,8 +194,10 @@ class SqlQueryForm
      * @param string $delimiter default delimiter to use
      *
      * @return string
+     *
+     * @usedby  self::getHtml()
      */
-    public function getHtmlForInsert(
+    public static function getHtmlForInsert(
         $query = '', $delimiter = ';'
     ) {
         // enable auto select text in textarea
@@ -206,7 +210,7 @@ class SqlQueryForm
         $locking = '';
         $height = $GLOBALS['cfg']['TextareaRows'] * 2;
 
-        list($legend, $query, $columns_list) = $this->init($query);
+        list($legend, $query, $columns_list) = self::init($query);
 
         if (! empty($columns_list)) {
             $sqlquerycontainer_id = 'sqlquerycontainer';
@@ -378,8 +382,10 @@ class SqlQueryForm
      * return HTML for sql Query Form Bookmark
      *
      * @return string|null
+     *
+     * @usedby  self::getHtml()
      */
-    public function getHtmlForBookmark()
+    public static function getHtmlForBookmark()
     {
         $bookmark_list = Bookmark::getList(
             $GLOBALS['dbi'],

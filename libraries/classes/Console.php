@@ -57,9 +57,9 @@ class Console
      *
      * @return void
      */
-    public function setAjax(bool $isAjax): void
+    public function setAjax($isAjax)
     {
-        $this->_isAjax = $isAjax;
+        $this->_isAjax = (boolean) $isAjax;
     }
 
     /**
@@ -67,7 +67,7 @@ class Console
      *
      * @return void
      */
-    public function disable(): void
+    public function disable()
     {
         $this->_isEnabled = false;
     }
@@ -78,7 +78,7 @@ class Console
      * @access public
      * @return string
      */
-    public static function getBookmarkContent(): string
+    public static function getBookmarkContent()
     {
         $cfgBookmark = Bookmark::getParams($GLOBALS['cfg']['Server']['user']);
         if ($cfgBookmark) {
@@ -116,7 +116,7 @@ class Console
      *
      * @return array list of scripts
      */
-    public function getScripts(): array
+    public function getScripts()
     {
         return array('console.js');
     }
@@ -127,7 +127,7 @@ class Console
      * @access public
      * @return string
      */
-    public function getDisplay(): string
+    public function getDisplay()
     {
         if ((! $this->_isAjax) && $this->_isEnabled) {
             $cfgBookmark = Bookmark::getParams(

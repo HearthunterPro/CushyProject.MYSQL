@@ -34,16 +34,16 @@ class BrowseForeigners
      * @param string  $themeImage  Theme image path
      */
     public function __construct(
-        int $limitChars,
-        int $maxRows,
-        int $repeatCells,
-        bool $showAll,
-        string $themeImage
+        $limitChars,
+        $maxRows,
+        $repeatCells,
+        $showAll,
+        $themeImage
     ) {
-        $this->limitChars = $limitChars;
-        $this->maxRows = $maxRows;
-        $this->repeatCells = $repeatCells;
-        $this->showAll = $showAll;
+        $this->limitChars = (int) $limitChars;
+        $this->maxRows = (int) $maxRows;
+        $this->repeatCells = (int) $repeatCells;
+        $this->showAll = (bool) $showAll;
         $this->themeImage = $themeImage;
     }
 
@@ -61,14 +61,14 @@ class BrowseForeigners
      * @return string $html the generated html
      */
     private function getHtmlForOneKey(
-        int $horizontal_count,
-        string $header,
+        $horizontal_count,
+        $header,
         array $keys,
-        int $indexByKeyname,
+        $indexByKeyname,
         array $descriptions,
-        int $indexByDescription,
-        string $current_value
-    ): string {
+        $indexByDescription,
+        $current_value
+    ) {
         $horizontal_count++;
         $output = '';
 
@@ -158,13 +158,13 @@ class BrowseForeigners
      * @return string
      */
     public function getHtmlForRelationalFieldSelection(
-        string $db,
-        string $table,
-        string $field,
+        $db,
+        $table,
+        $field,
         array $foreignData,
-        string $fieldkey,
-        string $current_value
-    ): string {
+        $fieldkey,
+        $current_value
+    ) {
         $gotopage = $this->getHtmlForGotoPage($foreignData);
         $foreignShowAll = Template::get('table/browse_foreigners/show_all')->render([
             'foreign_data' => $foreignData,
@@ -271,7 +271,7 @@ class BrowseForeigners
      *
      * @return array the new description and title
      */
-    private function getDescriptionAndTitle(string $description): array
+    private function getDescriptionAndTitle($description)
     {
         if (mb_strlen($description) <= $this->limitChars) {
             $description = htmlspecialchars(
@@ -299,7 +299,7 @@ class BrowseForeigners
      *
      * @return string
      */
-    private function getHtmlForGotoPage(?array $foreignData): string
+    private function getHtmlForGotoPage($foreignData)
     {
         $gotopage = '';
         isset($_REQUEST['pos']) ? $pos = $_REQUEST['pos'] : $pos = 0;
@@ -335,7 +335,7 @@ class BrowseForeigners
      *
      * @return string
      */
-    public function getForeignLimit(?string $foreignShowAll): ?string
+    public function getForeignLimit($foreignShowAll)
     {
         if (isset($foreignShowAll) && $foreignShowAll == __('Show all')) {
             return null;

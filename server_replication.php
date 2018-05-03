@@ -46,12 +46,10 @@ if (isset($_REQUEST['url_params']) && is_array($_REQUEST['url_params'])) {
     $GLOBALS['url_params'] = $_REQUEST['url_params'];
 }
 
-$replicationGui = new ReplicationGui();
-
 /**
  * Handling control requests
  */
-$replicationGui->handleControlRequest();
+ReplicationGui::handleControlRequest();
 
 /**
  * start output
@@ -62,19 +60,19 @@ $response->addHTML(Template::get('server/sub_page_header')->render([
 ]));
 
 // Display error messages
-$response->addHTML($replicationGui->getHtmlForErrorMessage());
+$response->addHTML(ReplicationGui::getHtmlForErrorMessage());
 
 if ($GLOBALS['replication_info']['master']['status']) {
-    $response->addHTML($replicationGui->getHtmlForMasterReplication());
+    $response->addHTML(ReplicationGui::getHtmlForMasterReplication());
 } elseif (! isset($_REQUEST['mr_configure'])
     && ! isset($_REQUEST['repl_clear_scr'])
 ) {
-    $response->addHTML($replicationGui->getHtmlForNotServerReplication());
+    $response->addHTML(ReplicationGui::getHtmlForNotServerReplication());
 }
 
 if (isset($_REQUEST['mr_configure'])) {
     // Render the 'Master configuration' section
-    $response->addHTML($replicationGui->getHtmlForMasterConfiguration());
+    $response->addHTML(ReplicationGui::getHtmlForMasterConfiguration());
     exit;
 }
 
@@ -83,12 +81,12 @@ $response->addHTML('</div>');
 if (! isset($_REQUEST['repl_clear_scr'])) {
     // Render the 'Slave configuration' section
     $response->addHTML(
-        $replicationGui->getHtmlForSlaveConfiguration(
+        ReplicationGui::getHtmlForSlaveConfiguration(
             $GLOBALS['replication_info']['slave']['status'],
             $server_slave_replication
         )
     );
 }
 if (isset($_REQUEST['sl_configure'])) {
-    $response->addHTML($replicationGui->getHtmlForReplicationChangeMaster("slave_changemaster"));
+    $response->addHTML(ReplicationGui::getHtmlForReplicationChangeMaster("slave_changemaster"));
 }

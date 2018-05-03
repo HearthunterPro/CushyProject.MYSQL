@@ -20,19 +20,6 @@ use PhpMyAdmin\Util;
 class Export
 {
     /**
-     * @var Words
-     */
-    private $words;
-
-    /**
-     * Export constructor.
-     */
-    public function __construct()
-    {
-        $this->words = new Words();
-    }
-
-    /**
      * This function is called from one of the other functions in this file
      * and it completes the handling of the export functionality.
      *
@@ -40,7 +27,7 @@ class Export
      *
      * @return void
      */
-    private function handle($export_data)
+    private static function handle($export_data)
     {
         global $db;
 
@@ -49,7 +36,7 @@ class Export
         $item_name = htmlspecialchars(Util::backquote($_GET['item_name']));
         if ($export_data !== false) {
             $export_data = htmlspecialchars(trim($export_data));
-            $title = sprintf($this->words->get('export'), $item_name);
+            $title = sprintf(Words::get('export'), $item_name);
             if ($response->isAjax()) {
                 $response->addJSON('message', $export_data);
                 $response->addJSON('title', $title);
@@ -65,7 +52,7 @@ class Export
         } else {
             $_db = htmlspecialchars(Util::backquote($db));
             $message  = __('Error in processing request:') . ' '
-                      . sprintf($this->words->get('no_view'), $item_name, $_db);
+                      . sprintf(Words::get('no_view'), $item_name, $_db);
             $message = Message::error($message);
 
             if ($response->isAjax()) {
@@ -76,15 +63,15 @@ class Export
                 $message->display();
             }
         }
-    }
+    } // end self::handle()
 
     /**
      * If necessary, prepares event information and passes
-     * it to handle() for the actual export.
+     * it to self::handle() for the actual export.
      *
      * @return void
      */
-    public function events()
+    public static function events()
     {
         global $_GET, $db;
 
@@ -94,17 +81,17 @@ class Export
             if (! $export_data) {
                 $export_data = false;
             }
-            $this->handle($export_data);
+            self::handle($export_data);
         }
-    }
+    } // end self::events()
 
     /**
      * If necessary, prepares routine information and passes
-     * it to handle() for the actual export.
+     * it to self::handle() for the actual export.
      *
      * @return void
      */
-    public function routines()
+    public static function routines()
     {
         global $_GET, $db;
 
@@ -127,18 +114,18 @@ class Export
                         . "$$\nDELIMITER ;\n";
                 }
 
-                $this->handle($export_data);
+                self::handle($export_data);
             }
         }
-    }
+    } // end self::routines()
 
     /**
      * If necessary, prepares trigger information and passes
-     * it to handle() for the actual export.
+     * it to self::handle() for the actual export.
      *
      * @return void
      */
-    public function triggers()
+    public static function triggers()
     {
         global $_GET, $db, $table;
 
@@ -152,7 +139,7 @@ class Export
                     break;
                 }
             }
-            $this->handle($export_data);
+            self::handle($export_data);
         }
-    }
+    } // end self::triggers()
 }
